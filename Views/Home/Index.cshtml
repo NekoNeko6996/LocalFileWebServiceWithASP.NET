@@ -1,0 +1,39 @@
+﻿@model LocalFileWebService.Models.Sources
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .card-img-top {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+    }
+
+    .card-title {
+        display: -webkit-box; /* Sử dụng chế độ Flexbox đặc biệt */
+        -webkit-box-orient: vertical; /* Đặt hướng cho các dòng */
+        overflow: hidden; /* Ẩn phần vượt quá */
+        text-overflow: ellipsis; /* Thêm dấu "..." */
+        -webkit-line-clamp: 2;
+    }
+
+    #card-container {
+        gap: 1rem;
+    }
+</style>
+
+<div class="d-flex flex-row flex-wrap" id="card-container">
+    @foreach (var source in ViewBag.sources)
+    {
+        <div class="card" style="width: 18rem;">
+            <video src="/Home/GetFile/@source.SourceId" class="card-img-top" controls=""></video>
+            <div class="card-body">
+                <h6 class="card-title">@source.SourceName</h6>
+                <hr>
+                <p class="card-text">01/01/2025 9:43:02 SA</p>
+            </div>
+        </div>
+    }
+</div>
