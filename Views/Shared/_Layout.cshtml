@@ -1,5 +1,6 @@
 ﻿@{ 
     string color_mode = "dark";
+    
 }
 
 <!DOCTYPE html>
@@ -10,25 +11,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="~/wwwroot/css/_Layout.css">
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <title>@ViewBag.Title</title>
+    <title>Local File Service</title>
 </head>
 <body id="body-pd" class="bg-dark">
     <header class="header" id="header">
         <div class="header_toggle"> <i class='bx bx-menu' id="header-toggle"></i> </div>
-        <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        @*<form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>*@
     </header>
     <div class="l-navbar bg-black" id="nav-bar">
         <nav class="nav">
             <div>
-                <a href="#" class="nav_logo"> 
-                    <i class='bx bx-layer nav_logo-icon'></i> 
-                    <span class="nav_logo-name">BBBootstrap</span> 
+                <a href="#" class="nav_logo">
+                    <i class='bx bx-layer nav_logo-icon'></i>
+                    <span class="nav_logo-name">BBBootstrap</span>
                 </a>
                 <div class="nav_list">
                     <a href="#" class="nav_link active">
@@ -57,14 +59,43 @@
                     </a>
                 </div>
             </div>
-            <a href="#" class="nav_link"> 
-                <i class='bx bx-log-out nav_icon'></i> 
-                <span class="nav_name">SignOut</span> 
+            <a href="#" class="nav_link">
+                <i class='bx bx-log-out nav_icon'></i>
+                <span class="nav_name">SignOut</span>
             </a>
         </nav>
     </div>
     <div class="height-100 bg-dark pt-3">
         @RenderBody()
+    </div>
+
+    @*floating add button*@
+    <div class="fab-container">
+        <div class="fab shadow">
+            <div class="fab-content">
+                <span class="material-icons">support_agent</span>
+            </div>
+        </div>
+        <div class="sub-button shadow">
+            <a href="google.com" target="_blank">
+                <span class="material-icons">phone</span>
+            </a>
+        </div>
+        <div class="sub-button shadow">
+            <a href="google.com" target="_blank">
+                <span class="material-icons">mail_outline</span>
+            </a>
+        </div>
+        <div class="sub-button shadow">
+            <a href="google.com" target="_blank">   
+                <span class="material-icons">language</span>
+            </a>
+        </div>
+        <div class="sub-button shadow">
+            <a href="google.com" target="_blank">
+                <span class="material-icons">help_outline</span>
+            </a>
+        </div>
     </div>
 
     <script>

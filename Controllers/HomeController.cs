@@ -20,16 +20,23 @@ namespace LocalFileWebService.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetFile()
+        public ActionResult GetFile(int id = -1)
         {
-            var db = new MVCDBContext();
-            Sources source = db.Sources.Where(s => s.SourceId.Equals(1)).FirstOrDefault();
-            string _ = source.SourceUrl.ToString();
-            var filePath = Path.Combine("C:\\Users\\tranp\\Downloads\\【AMV】 Hololive × Tấm Lòng Son Remix.mp4"); // Đường dẫn tệp
+            if (id == -1)
+            {
+                return HttpNotFound("Invalid File ID");
+            }
+            MVCDBContext db = new MVCDBContext();
+            Sources source = db.Sources.Where(s => s.SourceId.Equals(id)).FirstOrDefault();
+            if (source == null)
+            {
+                return HttpNotFound("File Not Found");
+            }
+            var filePath = Path.Combine(source.SourceUrl.Trim('\"')); // Đường dẫn tệp
             if (System.IO.File.Exists(filePath))
             {
                 var fileBytes = System.IO.File.ReadAllBytes(filePath); // Đọc file
-                var fileType = "video/mp4"; // Kiểu file, ví dụ: "image/jpeg" hoặc "video/mp4"
+                var fileType = source.SourceType; // Kiểu file, ví dụ: "image/jpeg" hoặc "video/mp4"
                 return File(fileBytes, fileType); // Trả file
             }
             return HttpNotFound("File Not Found");

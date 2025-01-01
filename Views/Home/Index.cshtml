@@ -22,18 +22,93 @@
     #card-container {
         gap: 1rem;
     }
+
+    .folder-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+    .folder-container {
+        width: 13rem;
+        height: 3.5rem;
+        gap: 1rem;
+        background-color: #505b65;
+        cursor: pointer;
+        border: 1px solid #505b65;
+    }
+    .folder-container:hover {
+        border-color: white;
+    }
+    .folder-name {
+        margin: 0;
+    }
+    .hr {
+        border-top: 1px solid #505b65;
+    }
+    .title {
+        color: white;
+    }
+    .foder-show-body {
+        gap: 1rem;
+    }
+
+    .directory-show {
+        background-color: #505b65;
+        color: white;
+        font-weight: bold;
+        flex-grow: 0 !important;
+        padding: 0.5rem 1rem;
+    }
 </style>
 
+<div class="position-relative d-block">
+    <h6 class="title rounded directory-show">Root > New Folder</h6>
+</div>
+
+<h4 class="title">Folders</h4>
+<div class="d-flex flex-row flex-wrap foder-show-body justify-content-around">
+    @for (var i = 0; i < 20; i++)
+    {
+        <div class="d-flex flex-row p-2 flex-grow-0 align-items-center folder-container rounded">
+            <img src="/Home/GetFile/3" class="nav_icon folder-icon" alt="...">
+            <h6 class="folder-name text-light">Card title</h6>
+        </div>
+    }
+</div>
+<hr class="hr"/>
+<h4 class="title">Files</h4>
 <div class="d-flex flex-row flex-wrap" id="card-container">
     @foreach (var source in ViewBag.sources)
     {
-        <div class="card" style="width: 18rem;">
-            <video src="/Home/GetFile/@source.SourceId" class="card-img-top" controls=""></video>
-            <div class="card-body">
-                <h6 class="card-title">@source.SourceName</h6>
-                <hr>
-                <p class="card-text">01/01/2025 9:43:02 SA</p>
-            </div>
+        <div class="card bg-dark" style="width: 18rem;">
+            @if (source.SourceType.Contains("image"))
+            {
+                <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
+            }
+            else if (source.SourceType.Contains("video"))
+            {
+                <video controls class="rounded">
+                    <source src="/Home/GetFile/@source.SourceId" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            }
+            else if (source.SourceType.Contains("audio"))
+            {
+                <audio controls class="rounded">
+                    <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
+                    Your browser does not support the audio tag.
+                </audio>
+            }
+            else
+            {
+                <p>Unsupported file type</p>
+            }
+
+            @*<div class="card-body">
+                    <h6 class="card-title">@source.SourceName</h6>
+                    <hr>
+                    <p class="card-text">01/01/2025 9:43:02 SA</p>
+                </div>*@
         </div>
+
     }
 </div>

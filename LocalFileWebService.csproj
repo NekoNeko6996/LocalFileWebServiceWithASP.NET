@@ -136,6 +136,7 @@
       <DependentUpon>202501010253599_initial1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\MVCDBContext.cs" />
     <Compile Include="Models\SourceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
