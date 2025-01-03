@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "SignUp";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+<div class="main bg-dark border">
+    <h3>@Session["token"]</h3>
+    <h1>Sign Up</h1>
+
+    <form action="/Auth/SignUp" method="post">
+        <label for="first">
+            Email:
+        </label>
+        <input type="text" id="first" name="UserEmail" placeholder="Enter your Username" class="bg-dark" required autofocus>
+
+        <label for="password">
+            Password:
+        </label>
+        <input type="password" id="password" name="Password" placeholder="Enter your Password" class="bg-dark" required>
+
+        <label for="password">
+            Repeat Password:
+        </label>
+        <input type="password" id="password" name="RePassword" placeholder="Enter your Password" class="bg-dark" required>
+
+        <div class="wrap">
+            <button type="submit">
+                Submit
+            </button>
+        </div>
+    </form>
+
+    <p class="text-white">
+        Have an Account?
+        <a href="#" style="text-decoration: none;">
+            Login Now
+        </a>
+    </p>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+</div>
+

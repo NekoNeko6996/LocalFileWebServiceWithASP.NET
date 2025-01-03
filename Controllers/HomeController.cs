@@ -2,22 +2,62 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using LocalFileWebService.Models;
+using Newtonsoft.Json;
 
 namespace LocalFileWebService.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         // GET: Home
         public ActionResult Index()
         {
+            string folder_path_params = Request.Params["p"];
+            string folderName = "root";
+
+
             MVCDBContext db = new MVCDBContext();
-            List<Sources> sources = db.Sources.ToList();
+
+            // Lấy và giải mã cookie
+            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
+            string userEmail = ticket.Name;
+
+            // Tìm thư mục root của user
+            var query_find_folder = db.Folders
+                .FirstOrDefault(folder => folder.User.UserEmail == userEmail && folder.FolderName == folderName);
+
+            if (query_find_folder == null)
+            {
+                // Thông báo người dùng nếu không tìm thấy thư mục root
+                ViewBag.ErrorMessage = "Không tìm thấy thư mục gốc.";
+                return View();
+            }
+
+            int parentFolderId = query_find_folder.FolderId;
+
+            // Tìm thư mục con
+            var foldersChildren = db.Folders
+                .Where(folder => folder.FolderParentId == parentFolderId)
+                .ToList();
+
+            // Tìm file con
+            var sources = db.FolderLinks
+                .Where(folderLink => folderLink.Folder.FolderId== parentFolderId)
+                .Select(folderLink => folderLink.Source)
+                .ToList();
+
+            ViewBag.Folders = foldersChildren;
             ViewBag.Sources = sources;
+
             return View();
         }
+
 
         [HttpGet]
         public ActionResult GetFile(int id = -1)
@@ -27,7 +67,7 @@ namespace LocalFileWebService.Controllers
                 return HttpNotFound("Invalid File ID");
             }
             MVCDBContext db = new MVCDBContext();
-            Sources source = db.Sources.Where(s => s.SourceId.Equals(id)).FirstOrDefault();
+            Source source = db.Sources.Where(s => s.SourceId.Equals(id)).FirstOrDefault();
             if (source == null)
             {
                 return HttpNotFound("File Not Found");

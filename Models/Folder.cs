@@ -10,7 +10,20 @@ namespace LocalFileWebService.Models
     {
         [Key]
         public int FolderId { get; set; }
+
+        [Required]  
+        public int UserId { get; set; }
+
+        [Required]
         public string FolderName { get; set; }
 
+        public string FolderIconUrl { get; set; }
+
+        public int FolderParentId { get; set; }
+
+        public DateTime FolderCreateAt { get; set; } = DateTime.Now;
+
+        //
+        public virtual User User {  get; set; } 
     }
 }
