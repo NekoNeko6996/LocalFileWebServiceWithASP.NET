@@ -17,38 +17,53 @@ namespace LocalFileWebService.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            string folder_path_params = Request.Params["p"];
-            string folderName = "root";
+            // get params
+            string folder_path_params = Request.Params["p"] ?? string.Empty;
+            List<string> folder_paths = new List<string> { "root" };
 
-
-            MVCDBContext db = new MVCDBContext();
-
-            // Lấy và giải mã cookie
-            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
-            string userEmail = ticket.Name;
-
-            // Tìm thư mục root của user
-            var query_find_folder = db.Folders
-                .FirstOrDefault(folder => folder.User.UserEmail == userEmail && folder.FolderName == folderName);
-
-            if (query_find_folder == null)
+            if (!string.IsNullOrEmpty(folder_path_params))
             {
-                // Thông báo người dùng nếu không tìm thấy thư mục root
-                ViewBag.ErrorMessage = "Không tìm thấy thư mục gốc.";
+                folder_paths.AddRange(folder_path_params.Split('/').ToList());
+            }
+
+            // get cookie
+            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (authCookie == null)
+            {
+                ViewBag.ErrorMessage = "Authentication cookie is missing.";
                 return View();
             }
 
-            int parentFolderId = query_find_folder.FolderId;
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
+            if (ticket == null)
+            {
+                ViewBag.ErrorMessage = "Invalid authentication ticket.";
+                return View();
+            }
 
-            // Tìm thư mục con
-            var foldersChildren = db.Folders
-                .Where(folder => folder.FolderParentId == parentFolderId)
+            string userEmail = ticket.Name;
+
+            // query 
+            MVCDBContext db = new MVCDBContext();
+            var folderQuery = db.Folders
+                .Where(folder => folder.User.UserEmail.Equals(userEmail) && folder_paths.Contains(folder.FolderName))
                 .ToList();
 
-            // Tìm file con
+            if (folderQuery.Count != folder_paths.Count)
+            {
+                ViewBag.ErrorMessage = "One or more folders in the path are missing.";
+                return View();
+            }
+
+            var lastFolder = folderQuery.Last();
+            int query_folder_id = lastFolder.FolderId;
+
+            var foldersChildren = db.Folders
+                .Where(folder => folder.FolderParentId == query_folder_id)
+                .ToList();
+
             var sources = db.FolderLinks
-                .Where(folderLink => folderLink.Folder.FolderId== parentFolderId)
+                .Where(folderLink => folderLink.Folder.FolderId == query_folder_id)
                 .Select(folderLink => folderLink.Source)
                 .ToList();
 
@@ -57,6 +72,7 @@ namespace LocalFileWebService.Controllers
 
             return View();
         }
+
 
 
         [HttpGet]

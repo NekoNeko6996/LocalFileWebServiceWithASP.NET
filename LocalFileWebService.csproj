@@ -225,8 +225,9 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="wwwroot\css\_Layout.css" />
+    <Content Include="Content\css\_Layout.css" />
     <Content Include="Web.config" />
+    <Content Include="Content\Image\empty-folder.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />

@@ -1,124 +1,84 @@
-﻿@model LocalFileWebService.Models.Source
+﻿@using LocalFileWebService.Models
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var folder_path = Request.QueryString["p"];
+    var folders = ViewBag.Folders as List<Folder> ?? new List<Folder>();
+    var sources = ViewBag.sources as List<Source> ?? new List<Source>();
+}
+<div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
+    <h6 class="title rounded directory-show text-white m-0">Root @(string.IsNullOrEmpty(folder_path)? "" : $"> {folder_path.Replace("/", " > ")}")</h6>
+</div>
+
+@if (folders.Count > 0)
+{
+    <h4 class="title text-white mt-2">Folders</h4>
+    <div class="d-flex flex-row flex-wrap foder-show-body" style="margin-top: 2rem; margin-bottom: 2rem;">
+        @foreach (var folder in folders)
+        {
+            <a href="?p=@(string.IsNullOrEmpty(folder_path) ? folder.FolderName : $"{folder_path}/{folder.FolderName}")">
+                <div class="d-flex flex-row p-2 flex-grow-0 align-items-center folder-container rounded border" style="width: 13rem; gap: 10px">
+                    @if (string.IsNullOrEmpty(folder.FolderIconUrl))
+                    {
+                        <svg width="30px" height="30px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M810.665 269.333v-24.889c0-27.467-22.288-49.777-49.777-49.777H437.333v-24.89c0-27.467-22.288-49.777-49.779-49.777H263.11c-27.489 0-49.777 22.31-49.777 49.777v99.556h597.332z" fill="#2577FF" /><path d="M885.332 269.333H399.999V232c0-41.203-33.431-74.667-74.667-74.667H138.667C97.431 157.333 64 190.798 64 232v597.333C64 870.6 97.431 904 138.667 904h746.665c41.235 0 74.666-33.4 74.666-74.667V344c0-41.202-33.431-74.667-74.666-74.667z" fill="#FCB814" /><path d="M344 209.224v60.109h55.528c10.588-82.956-28.514-102.28-62.733-110.843A181.619 181.619 0 0 1 344 209.224zM896.794 270.491C901.296 280.096 904 290.7 904 302v485.334C904 828.6 870.566 862 829.332 862H82.665c-3.93 0-7.71-0.571-11.477-1.156C83.092 886.282 108.73 904 138.665 904h746.667C926.566 904 960 870.6 960 829.333V344c0-37.278-27.454-67.953-63.206-73.509z" fill="" /></svg>
+                    }
+                    else
+                    {
+                        <img src="/Home/GetFile/3" class="nav_icon folder-icon" alt="icon">
+                    }
+                    <h6 class="folder-name text-light m-0">@folder.FolderName</h6>
+                </div>
+            </a>
+        }
+
+    </div>
+    <hr style="border-top: 1px solid var(--white-gray-color); " />
+}
+else
+{
+    <br />
 }
 
-<style>
-    .card-img-top {
-        width: 100%;
-        aspect-ratio: 16/9;
-        object-fit: cover;
-    }
-
-    .card-title {
-        display: -webkit-box; /* Sử dụng chế độ Flexbox đặc biệt */
-        -webkit-box-orient: vertical; /* Đặt hướng cho các dòng */
-        overflow: hidden; /* Ẩn phần vượt quá */
-        text-overflow: ellipsis; /* Thêm dấu "..." */
-        -webkit-line-clamp: 2;
-    }
-
-    #card-container {
-        gap: 1rem;
-    }
-
-    .folder-icon {
-        width: 2rem;
-        height: 2rem;
-    }
-    .folder-container {
-        width: 13rem;
-        height: 3.5rem;
-        gap: 1rem;
-        background-color: #505b65;
-        cursor: pointer;
-        border: 1px solid #505b65;
-    }
-    .folder-container:hover {
-        border-color: white;
-    }
-    .folder-name {
-        margin: 0;
-    }
-    .hr {
-        border-top: 1px solid #505b65;
-    }
-    .title {
-        color: white;
-    }
-    .foder-show-body {
-        gap: 1rem;
-    }
-
-    .directory-show {
-        background-color: #505b65;
-        color: white;
-        font-weight: bold;
-        flex-grow: 0 !important;
-        padding: 0.5rem 1rem;
-    }
-</style>
-
-<div class="position-relative d-block">
-    <h6 class="title rounded directory-show">Root @(string.IsNullOrEmpty(folder_path)? "" : folder_path.Replace("/", " > "))</h6>
-</div>
-
-<h4 class="title">Folders</h4>
-<div class="d-flex flex-row flex-wrap foder-show-body">
-    @foreach (var folder in ViewBag.Folders)
+<h4 class="title text-white">Files</h4>
+<div class="d-flex flex-row flex-wrap" id="card-container" style="margin-top: 2rem; margin-bottom: 2rem;">
+    @if (sources.Count > 0)
     {
-        <a href="Index?p=@($"{folder_path}/{folder.FolderName}")">
-            <div class="d-flex flex-row p-2 flex-grow-0 align-items-center folder-container rounded">
-                @if (string.IsNullOrEmpty(folder.FolderIconUrl))
+        foreach (var source in sources)
+        {
+            <div class="card bg-dark" style="width: 18rem;">
+                @if (source.SourceType.Contains("image"))
                 {
-                    <svg width="30px" height="30px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M810.665 269.333v-24.889c0-27.467-22.288-49.777-49.777-49.777H437.333v-24.89c0-27.467-22.288-49.777-49.779-49.777H263.11c-27.489 0-49.777 22.31-49.777 49.777v99.556h597.332z" fill="#2577FF" /><path d="M885.332 269.333H399.999V232c0-41.203-33.431-74.667-74.667-74.667H138.667C97.431 157.333 64 190.798 64 232v597.333C64 870.6 97.431 904 138.667 904h746.665c41.235 0 74.666-33.4 74.666-74.667V344c0-41.202-33.431-74.667-74.666-74.667z" fill="#FCB814" /><path d="M344 209.224v60.109h55.528c10.588-82.956-28.514-102.28-62.733-110.843A181.619 181.619 0 0 1 344 209.224zM896.794 270.491C901.296 280.096 904 290.7 904 302v485.334C904 828.6 870.566 862 829.332 862H82.665c-3.93 0-7.71-0.571-11.477-1.156C83.092 886.282 108.73 904 138.665 904h746.667C926.566 904 960 870.6 960 829.333V344c0-37.278-27.454-67.953-63.206-73.509z" fill="" /></svg> }
+                    <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
+                }
+                else if (source.SourceType.Contains("video"))
+                {
+                    <video controls class="rounded">
+                        <source src="/Home/GetFile/@source.SourceId" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else if (source.SourceType.Contains("audio"))
+                {
+                    <audio controls class="rounded">
+                        <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
+                        Your browser does not support the audio tag.
+                    </audio>
+                }
                 else
                 {
-                    <img src="/Home/GetFile/ class=\" nav_icon folder-icon\" alt="icon">
+                    <div class="unsupported-file">
+                        <svg ...></svg>
+                        <p class="text-muted">Unsupported file type</p>
+                    </div>
                 }
-
-                <h6 class="folder-name text-light">@folder.FolderName</h6>
             </div>
-        </a>
+        }
     }
-</div>
-<hr class="hr"/>
-<h4 class="title">Files</h4>
-<div class="d-flex flex-row flex-wrap" id="card-container">
-    @foreach (var source in ViewBag.sources)
-        {
-        <div class="card bg-dark" style="width: 18rem;">
-            @if (source.SourceType.Contains("image"))
-            {
-                <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
-            }
-            else if (source.SourceType.Contains("video"))
+    else
     {
-                <video controls class="rounded">
-                    <source src="/Home/GetFile/@source.SourceId" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            }
-            else if (source.SourceType.Contains("audio"))
-    {
-                <audio controls class="rounded">
-                    <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
-                    Your browser does not support the audio tag.
-                </audio>
-            }
-            else
-    {
-                <p>Unsupported file type</p>
-            }
-
-            @*<div class="card-body">
-                    <h6 class="card-title">@source.SourceName</h6>
-                    <hr>
-                    <p class="card-text">01/01/2025 9:43:02 SA</p>
-                </div>*@
+        <div class="d-flex align-items-center flex-column" style="width: 100%">
+            <img src="~/Content/Image/empty-folder.png" alt="Folder Empty" style="width:13rem; aspect-ratio:1/1;" />
+            <h6 class="text-muted">Folder Is Empty ...</h6>
         </div>
-
     }
 </div>
