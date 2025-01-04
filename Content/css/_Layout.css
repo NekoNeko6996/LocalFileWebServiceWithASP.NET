@@ -6,7 +6,8 @@
     --white-gray-color: #7a7a7a;
     --body-font: 'Nunito', sans-serif;
     --normal-font-size: 1rem;
-    --z-fixed: 100
+    --z-fixed: 100;
+    --color-dark: #343a40;
 }
 
 *, ::before, ::after {

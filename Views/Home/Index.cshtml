@@ -6,6 +6,60 @@
     var folders = ViewBag.Folders as List<Folder> ?? new List<Folder>();
     var sources = ViewBag.sources as List<Source> ?? new List<Source>();
 }
+
+<style>
+    .view-video-btn {
+        cursor: pointer;
+    }
+
+    .floating-play-media-container-layer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(52, 52, 52, 0.50);
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: end;
+        z-index: 1000;
+    }
+
+    .play-media-container {
+        width: 100%;
+        max-width: 1000px;
+        height: 100%;
+        max-height: 800px;
+        background-color: #202427;
+        bottom: 0;
+        border-radius: 10px 10px 0 0;
+        padding: 10px;
+    }
+
+    .play-media-container > video {
+        width: 100%;
+        aspect-ratio: 16/9;
+        cursor: pointer;
+    }
+
+    .conatainer-display-hidden {
+        display: none !important;
+    }
+
+    .conatainer-display-show {
+        display: flex !important;
+    }
+
+    .file-display-name {
+        white-space: nowrap; /* Ngăn xuống dòng */
+        overflow: hidden; /* Ẩn nội dung thừa */
+        text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
+        margin: 5px 0 5px 0;
+        text-align: left;
+    }
+</style>
+
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
     <h6 class="title rounded directory-show text-white m-0">Root @(string.IsNullOrEmpty(folder_path)? "" : $"> {folder_path.Replace("/", " > ")}")</h6>
 </div>
@@ -45,8 +99,8 @@ else
     {
         foreach (var source in sources)
         {
-            <a href="/Home/GetFile/@source.SourceId" target="_blank">
-                <div class="card bg-dark" style="width: 18rem;">
+            <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
+                <div class="card bg-dark border-0" style="width: 18rem;">
                     @if (source.SourceType.Contains("image"))
                     {
                         <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
@@ -54,7 +108,10 @@ else
                     else if (source.SourceType.Contains("video"))
                     {
                         <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
-                        <p class="text-white bg-dark p-1 rounded position-absolute m-0" style="bottom: 5px; right: 5px;">01:30</p>
+                        <div class="d-flex flex-row align-items-center">
+                            <a href="/Home/GetFile/@source.SourceId" class="file-display-name text-white" style="font-size: .8rem; text-decoration: none;">@source.SourceName</a>
+                            <p class="text-white bg-dark m-0" style="font-size:.8rem; padding: 0 5px 0 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
+                        </div>
                     }
                     else if (source.SourceType.Contains("audio"))
                     {
@@ -71,7 +128,7 @@ else
                         </div>
                     }
                 </div>
-            </a>
+            </button>
         }
     }
     else
@@ -82,3 +139,33 @@ else
         </div>
     }
 </div>
+
+<div class="floating-play-media-container-layer conatainer-display-hidden">
+    <div class="play-media-container">
+        <video controls autoplay class="rounded" id="video-source-element">
+            <source src="" type="video/mp4">
+        </video>
+        <h4 id="view-video-source-name" class="text-white mt-1"></h4>
+    </div>
+</div>
+
+<script>
+    function onClickOpenViewVideo(url, name) {
+        const videoElement = document.getElementById("video-source-element");
+        videoElement.src = url;
+        videoElement.load();
+        document.querySelector("#view-video-source-name").innerText = name;
+
+        const container = document.querySelector(".floating-play-media-container-layer");
+        container.classList.remove("conatainer-display-hidden");
+        container.classList.add("conatainer-display-show");
+
+        container.addEventListener("click", (e) => {
+            if (!e.target.closest(".play-media-container")) {
+                container.classList.remove("conatainer-display-show");
+                container.classList.add("conatainer-display-hidden");
+                document.getElementById("video-source-element").pause();
+            }
+        });
+    }
+</script>

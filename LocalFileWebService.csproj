@@ -252,6 +252,10 @@
     <Compile Include="Migrations\202501040848092_update_source_thumbnail.Designer.cs">
       <DependentUpon>202501040848092_update_source_thumbnail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202501041556508_update-source-table.cs" />
+    <Compile Include="Migrations\202501041556508_update-source-table.Designer.cs">
+      <DependentUpon>202501041556508_update-source-table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Folder.cs" />
@@ -312,6 +316,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202501040848092_update_source_thumbnail.resx">
       <DependentUpon>202501040848092_update_source_thumbnail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501041556508_update-source-table.resx">
+      <DependentUpon>202501041556508_update-source-table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

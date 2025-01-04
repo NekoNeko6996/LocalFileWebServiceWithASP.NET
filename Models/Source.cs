@@ -31,6 +31,7 @@ namespace LocalFileWebService.Models
         public string SourceUrl { get; set; }
 
         public string SourceThumbnailName {  get; set; }
+        public int SourceLength { get; set; } = 0;
 
         //
         public virtual User User { get; set; }
