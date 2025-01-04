@@ -8,6 +8,8 @@ using System.Web.Mvc;
 using System.Web.Security;
 using LocalFileWebService.Models;
 using Newtonsoft.Json;
+using LocalFileWebService.Class;
+using FFMpegCore;
 
 namespace LocalFileWebService.Controllers
 {
@@ -74,8 +76,35 @@ namespace LocalFileWebService.Controllers
         }
 
 
-
         [HttpGet]
+        public ActionResult GetVideoFileThumbnail(int id = -1)
+        {
+            if (id == -1)
+            {
+                return HttpNotFound("Invalid File ID");
+            }
+            MVCDBContext db = new MVCDBContext();
+            Source source = db.Sources.Where(s => s.SourceId.Equals(id)).FirstOrDefault();
+            if (source == null)
+            {
+                return HttpNotFound("File Not Found");
+            }
+
+            var filePath = Server.MapPath($"~/Content/Thumbnail/{source.SourceThumbnailName}");
+
+            if (System.IO.File.Exists(filePath))
+            {
+                string thumbnailPath = Path.Combine(Server.MapPath("~/Content/Thumbnail"), $"{Guid.NewGuid()}.jpg");
+
+                // Tạo ảnh snapshot từ video
+                //FFMpeg.Snapshot(filePath, thumbnailPath, null, TimeSpan.FromSeconds(1));
+
+                // Trả về file hình ảnh
+                return File(System.IO.File.ReadAllBytes(filePath), "image/png"); //source.SourceType
+            }
+            return HttpNotFound("File Not Found");
+        }
+
         public ActionResult GetFile(int id = -1)
         {
             if (id == -1)
@@ -88,12 +117,14 @@ namespace LocalFileWebService.Controllers
             {
                 return HttpNotFound("File Not Found");
             }
-            var filePath = Path.Combine(source.SourceUrl.Trim('\"')); // Đường dẫn tệp
+
+            var filePath = source.SourceUrl;
+
             if (System.IO.File.Exists(filePath))
             {
-                var fileBytes = System.IO.File.ReadAllBytes(filePath); // Đọc file
-                var fileType = source.SourceType; // Kiểu file, ví dụ: "image/jpeg" hoặc "video/mp4"
-                return File(fileBytes, fileType); // Trả file
+
+                // Trả về file hình ảnh
+                return File(System.IO.File.ReadAllBytes(filePath), source.SourceType); //source.SourceType
             }
             return HttpNotFound("File Not Found");
         }

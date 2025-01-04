@@ -56,6 +56,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="FFMpegCore, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\FFMpegCore.5.1.0\lib\netstandard2.0\FFMpegCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Instances, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Instances.3.0.0\lib\netstandard2.0\Instances.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -232,6 +238,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Class\JWT.cs" />
+    <Compile Include="Class\Media.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -240,6 +247,10 @@
     <Compile Include="Migrations\202501030339151_updatedbv1.cs" />
     <Compile Include="Migrations\202501030339151_updatedbv1.Designer.cs">
       <DependentUpon>202501030339151_updatedbv1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202501040848092_update_source_thumbnail.cs" />
+    <Compile Include="Migrations\202501040848092_update_source_thumbnail.Designer.cs">
+      <DependentUpon>202501040848092_update_source_thumbnail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Artist.cs" />
@@ -291,12 +302,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Thumbnail\" />
     <Folder Include="UploadFIles\" />
     <Folder Include="Views\Authenticaton\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202501030339151_updatedbv1.resx">
       <DependentUpon>202501030339151_updatedbv1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501040848092_update_source_thumbnail.resx">
+      <DependentUpon>202501040848092_update_source_thumbnail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

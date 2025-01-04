@@ -30,6 +30,8 @@ namespace LocalFileWebService.Models
         [Url, Required]
         public string SourceUrl { get; set; }
 
+        public string SourceThumbnailName {  get; set; }
+
         //
         public virtual User User { get; set; }
         public virtual Artist Artist { get; set; }

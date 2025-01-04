@@ -45,33 +45,33 @@ else
     {
         foreach (var source in sources)
         {
-            <div class="card bg-dark" style="width: 18rem;">
-                @if (source.SourceType.Contains("image"))
-                {
-                    <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
-                }
-                else if (source.SourceType.Contains("video"))
-                {
-                    <video controls class="rounded">
-                        <source src="/Home/GetFile/@source.SourceId" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                }
-                else if (source.SourceType.Contains("audio"))
-                {
-                    <audio controls class="rounded">
-                        <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
-                        Your browser does not support the audio tag.
-                    </audio>
-                }
-                else
-                {
-                    <div class="unsupported-file">
-                        <svg ...></svg>
-                        <p class="text-muted">Unsupported file type</p>
-                    </div>
-                }
-            </div>
+            <a href="/Home/GetFile/@source.SourceId" target="_blank">
+                <div class="card bg-dark" style="width: 18rem;">
+                    @if (source.SourceType.Contains("image"))
+                    {
+                        <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
+                    }
+                    else if (source.SourceType.Contains("video"))
+                    {
+                        <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
+                        <p class="text-white bg-dark p-1 rounded position-absolute m-0" style="bottom: 5px; right: 5px;">01:30</p>
+                    }
+                    else if (source.SourceType.Contains("audio"))
+                    {
+                        <audio controls class="rounded">
+                            <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
+                            Your browser does not support the audio tag.
+                        </audio>
+                    }
+                    else
+                    {
+                        <div class="unsupported-file">
+                            <svg ...></svg>
+                            <p class="text-muted">Unsupported file type</p>
+                        </div>
+                    }
+                </div>
+            </a>
         }
     }
     else
