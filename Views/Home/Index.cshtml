@@ -57,11 +57,44 @@
         text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
         margin: 5px 0 5px 0;
         text-align: left;
+
+    }
+
+    .folder-name:active {
+        color: white;
+    }
+
+    .folder-name:hover {
+        color: white;
+        text-decoration: none !important;
     }
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
-    <h6 class="title rounded directory-show text-white m-0">Root @(string.IsNullOrEmpty(folder_path)? "" : $"> {folder_path.Replace("/", " > ")}")</h6>
+    <h6 class="title rounded directory-show text-white m-0">
+        <a href="/Home/Index" class="text-decoration-none text-white">Root</a> 
+        @{
+            if (!string.IsNullOrEmpty(folder_path))
+            {
+                string[] folder_path_list = folder_path.Split('/');
+                var path = "";
+                for (int idx = 0; idx < folder_path_list.Length; idx++)
+                {
+                    if (idx == 0)
+                    {
+                        path = folder_path_list[idx];
+                    }
+                    else
+                    {
+                        path += $"/{folder_path_list[idx]}";
+                    }
+                    <span>
+                        > <a href="/Home/Index?p=@path" class="text-decoration-none text-white">@folder_path_list[idx]</a>
+                    </span>
+                }
+            }
+        }
+    </h6>
 </div>
 
 @if (folders.Count > 0)
@@ -93,42 +126,50 @@ else
     <br />
 }
 
-<h4 class="title text-white">Files</h4>
+<div class="d-flex flex-row justify-content-between">
+    <h4 class="title text-white">Files</h4>
+    <div class="">
+        <label class="switch text-white" for="my-checkbox">Auto Play</label>
+        <input type="checkbox" name="auto-play-checkbox" id="auto-play-checkbox">
+    </div>
+</div>
 <div class="d-flex flex-row flex-wrap" id="card-container" style="margin-top: 2rem; margin-bottom: 2rem;">
     @if (sources.Count > 0)
     {
         foreach (var source in sources)
         {
-            <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
-                <div class="card bg-dark border-0" style="width: 18rem;">
-                    @if (source.SourceType.Contains("image"))
-                    {
-                        <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
-                    }
-                    else if (source.SourceType.Contains("video"))
-                    {
+            
+            <div class="card bg-dark border-0" style="width: 18rem;">
+                @if (source.SourceType.Contains("image"))
+                {
+                    <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
+                }
+                else if (source.SourceType.Contains("video"))
+                {
+                    <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
                         <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
                         <div class="d-flex flex-row align-items-center">
-                            <a href="/Home/GetFile/@source.SourceId" class="file-display-name text-white" style="font-size: .8rem; text-decoration: none;">@source.SourceName</a>
+                            <p href="/Home/GetFile/@source.SourceId" class="file-display-name text-white" style="font-size: .8rem; text-decoration: none;">@source.SourceName</p>
                             <p class="text-white bg-dark m-0" style="font-size:.8rem; padding: 0 5px 0 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
                         </div>
-                    }
-                    else if (source.SourceType.Contains("audio"))
-                    {
-                        <audio controls class="rounded">
-                            <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
-                            Your browser does not support the audio tag.
-                        </audio>
-                    }
-                    else
-                    {
-                        <div class="unsupported-file">
-                            <svg ...></svg>
-                            <p class="text-muted">Unsupported file type</p>
-                        </div>
-                    }
-                </div>
-            </button>
+                    </button>
+                }
+                else if (source.SourceType.Contains("audio"))
+                {
+                    <audio controls class="rounded">
+                        <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
+                        Your browser does not support the audio tag.
+                    </audio>
+                }
+                else
+                {
+                    <div class="unsupported-file">
+                        <svg ...></svg>
+                        <p class="text-muted">Unsupported file type</p>
+                    </div>
+                }
+            </div>
+            
         }
     }
     else
@@ -150,8 +191,14 @@ else
 </div>
 
 <script>
+
     function onClickOpenViewVideo(url, name) {
         const videoElement = document.getElementById("video-source-element");
+        if (document.getElementById("auto-play-checkbox").checked) {
+            videoElement.autoplay = true;
+        } else {
+            videoElement.autoplay = false;
+        }
         videoElement.src = url;
         videoElement.load();
         document.querySelector("#view-video-source-name").innerText = name;

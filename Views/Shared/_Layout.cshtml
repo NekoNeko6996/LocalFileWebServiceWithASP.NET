@@ -22,6 +22,43 @@
         .modal-backdrop {
             width: 100%;
         }
+
+        .modal-body {
+            box-sizing: border-box;
+        }
+
+        .ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-file-list {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .uploadfile-tbody {
+            overflow: hidden;
+        }
+
+        th {
+            overflow: hidden;
+
+        }
+
+        td {
+            overflow: hidden;
+        }
+
+        #fileList li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
     </style>
 </head>
 <body id="body-pd" class="bg-dark">
@@ -84,7 +121,7 @@
             </div>
         </div>
         <div class="sub-button shadow">
-            <a href="google.com" target="_blank">   
+            <a href="google.com" target="_blank">
                 <span class="material-icons">folder</span>
             </a>
         </div>
@@ -106,17 +143,101 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="/" method="post">
-                        <input type="file" name="upload-file" value="" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary d-flex flex-row justify-content-center"><span class="material-icons">upload</span> Upload</button>
-                </div>
+                    <div id="dropZone" style="border: 2px dashed #007bff; padding: 20px; text-align: center; cursor: pointer;">
+                        <p class="m-0">Drag Files Here or Click To Select Files</p>
+                        <input type="file" id="fileInput" multiple style="display: none;" />
+                    </div>
+                    <br />
+                    <div>
+                        <button id="uploadButton" class="btn btn-primary">Upload</button>
+                    </div>
+                    <br />
+                        <div id="fileList"></div>
+                    </div>
+                
             </div>
         </div>
     </div>
+
+
+    <script>
+        // Kéo thả
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let filesToUpload = [];
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = "#00b300";
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = "#007bff";
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = "#007bff";
+
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            files.forEach((file) => {
+                if (filesToUpload.some(f => f.name === file.name)) {
+                    alert(`File ${file.name} is already added.`);
+                    return;
+                }
+
+                filesToUpload.push(file);
+                const listItem = document.createElement('li');
+                listItem.textContent = file.name;
+                listItem.classList.add('ellipsis');
+                fileList.appendChild(listItem);
+            });
+        }
+
+
+        // Upload Files
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            const formData = new FormData();
+            filesToUpload.forEach(file => {
+                formData.append('files', file);
+            });
+
+            fetch('/Home/UploadFiles', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Upload failed");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Upload successful!');
+                        fileList.innerHTML = ''; // Xóa danh sách file sau khi upload thành công
+                        filesToUpload = [];
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Upload failed! Please try again.');
+                });
+
+        });
+    </script>
 
     <script>
 

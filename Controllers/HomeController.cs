@@ -141,5 +141,85 @@ namespace LocalFileWebService.Controllers
             }
             return HttpNotFound("File Not Found");
         }
+
+        [HttpPost]
+        public ActionResult UploadFiles()
+        {
+            MVCDBContext db = new MVCDBContext();
+
+            HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie != null)
+            {
+                return Json(new { success = false, message = "user not alower" });
+            }
+
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+            string userEmail = ticket.Name;
+
+            User user = db.Users.Where(u => u.UserEmail.ToLower().Equals(userEmail.ToLower())).FirstOrDefault();
+
+            if (user != null)
+            {
+                return Json(new )
+            }
+
+            string uploadedFilePath = "~/UploadFiles/";
+            string uploadPath = Server.MapPath(uploadedFilePath);
+
+            // Tạo thư mục nếu chưa tồn tại
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            var uploadedFiles = Request.Files;
+            var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".docx", "mp4" };
+
+            List<string> errorMessages = new List<string>();
+
+            for (int count = 0; count < uploadedFiles.Count; count++)
+            {
+                try
+                {
+                    HttpPostedFileBase file = uploadedFiles[count];
+                    if (file != null)
+                    {
+                        string fileExtension = Path.GetExtension(file.FileName);
+
+                        // Kiểm tra loại file hợp lệ
+                        if (!allowedExtensions.Contains(fileExtension.ToLower()))
+                        {
+                            return Json(new { success = false, message = $"File type '{fileExtension}' is not allowed." });
+                        }
+
+                        // Kiểm tra kích thước file (5MB)
+                        //if (file.ContentLength > 5 * 1024 * 1024)
+                        //{
+                        //    return Json(new { success = false, message = "File size exceeds the 5MB limit." });
+                        //}
+
+                        string fileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}{fileExtension}";
+                        string path = Path.Combine(uploadPath, fileName);
+
+                        // Lưu file
+                        file.SaveAs(path);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorMessages.Add($"File {count + 1}: {ex.Message}");
+                }
+            }
+
+            if (errorMessages.Count > 0)
+            {
+                return Json(new { success = false, message = string.Join(", ", errorMessages) });
+            }
+
+            return Json(new { success = true, message = "Files uploaded successfully." });
+            
+           
+        }
+
     }
 }
