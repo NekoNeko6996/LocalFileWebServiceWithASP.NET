@@ -62,6 +62,12 @@
     <Reference Include="Instances, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Instances.3.0.0\lib\netstandard2.0\Instances.dll</HintPath>
     </Reference>
+    <Reference Include="MediaInfo.DotNetWrapper, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MediaInfo.DotNetWrapper.1.0.7\lib\net40\MediaInfo.DotNetWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MediaInfo.Wrapper.21.9.3\lib\net45\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -262,6 +268,14 @@
     <Compile Include="Migrations\202501041556508_update-source-table.Designer.cs">
       <DependentUpon>202501041556508_update-source-table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202501070454106_update-source-thumbnail-path.cs" />
+    <Compile Include="Migrations\202501070454106_update-source-thumbnail-path.Designer.cs">
+      <DependentUpon>202501070454106_update-source-thumbnail-path.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202501080343239_update-source-sourceUrl.cs" />
+    <Compile Include="Migrations\202501080343239_update-source-sourceUrl.Designer.cs">
+      <DependentUpon>202501080343239_update-source-sourceUrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Folder.cs" />
@@ -314,7 +328,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Thumbnail\" />
-    <Folder Include="UploadFIles\" />
+    <Folder Include="UploadFiles\" />
     <Folder Include="Views\Authenticaton\" />
   </ItemGroup>
   <ItemGroup>
@@ -326,6 +340,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202501041556508_update-source-table.resx">
       <DependentUpon>202501041556508_update-source-table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501070454106_update-source-thumbnail-path.resx">
+      <DependentUpon>202501070454106_update-source-thumbnail-path.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202501080343239_update-source-sourceUrl.resx">
+      <DependentUpon>202501080343239_update-source-sourceUrl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
@@ -360,8 +380,10 @@
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
     <Error Condition="!Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
   </Target>
   <Import Project="packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <Import Project="packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

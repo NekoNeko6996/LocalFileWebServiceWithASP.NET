@@ -5,24 +5,42 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MediaInfo;
+using FFMpegCore.Arguments;
 
 namespace LocalFileWebService.Class
 {
     public class Media
     {
-        public static byte[] GetThumbnail(string videoPath)
+        public class MediaInfomation
         {
-            string thumbnailPath = "C:\\Users\\tranp\\Desktop\\ASP NET";
+            public int Duration { get; set; }
+            public long Size { get; set; }
+            public double FrameRate { get; set; }
+        }
 
+        public static byte[] GetThumbnail(string videoPath, string exportThumbnailPath, string thumbnailName)
+        {
+            string thumbnailFilePath = Path.Combine(exportThumbnailPath, thumbnailName);
             // Lấy frame đầu tiên
-            FFMpeg.Snapshot("C:\\Users\\tranp\\Downloads\\【AMV】 Hololive × Tấm Lòng Son Remix.mp4", thumbnailPath, null, TimeSpan.FromSeconds(0));
+            FFMpeg.Snapshot(videoPath, thumbnailFilePath, null, TimeSpan.FromSeconds(0));
 
             // Trả về ảnh
-            byte[] imageBytes = System.IO.File.ReadAllBytes(thumbnailPath);
-            // Dọn dẹp tệp tạm
-            System.IO.File.Delete(thumbnailPath); 
-
+            byte[] imageBytes = System.IO.File.ReadAllBytes(thumbnailFilePath);
             return imageBytes;
+        }
+
+        public static MediaInfomation GetMediaInfo(string filePath)
+        {
+            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfoWrapper(filePath);
+            
+            // Lấy các thông tin cơ bản
+            return new MediaInfomation
+            {
+                Duration = mediaInfo.Duration,
+                Size = mediaInfo.Size,
+                FrameRate = mediaInfo.Framerate,
+            };
         }
     }
 }

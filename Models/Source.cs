@@ -27,10 +27,10 @@ namespace LocalFileWebService.Models
 
         public DateTime UploadTime { get; set; } = DateTime.Now;
 
-        [Url, Required]
+        [Required]
         public string SourceUrl { get; set; }
 
-        public string SourceThumbnailName {  get; set; }
+        public string SourceThumbnailPath {  get; set; }
         public int SourceLength { get; set; } = 0;
 
         //

@@ -68,6 +68,7 @@
         color: white;
         text-decoration: none !important;
     }
+
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
@@ -148,11 +149,13 @@ else
                 {
                     <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
                         <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
-                        <div class="d-flex flex-row align-items-center">
-                            <p href="/Home/GetFile/@source.SourceId" class="file-display-name text-white" style="font-size: .8rem; text-decoration: none;">@source.SourceName</p>
-                            <p class="text-white bg-dark m-0" style="font-size:.8rem; padding: 0 5px 0 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
-                        </div>
+                        <p class="text-white bg-dark m-0 position-absolute" style="font-size:.8rem; padding: 0 5px 0 5px; top: 5px; right: 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
                     </button>
+                    <div class="d-flex flex-row align-items-center justify-content-between">
+                        <p href="/Home/GetFile/@source.SourceId" class="file-display-name text-white flex-grow-1" style="font-size: .8rem; text-decoration: none;">@source.SourceName</p>
+                        
+                    </div>
+                   
                 }
                 else if (source.SourceType.Contains("audio"))
                 {

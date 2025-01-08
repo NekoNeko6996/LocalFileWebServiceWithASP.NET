@@ -3,11 +3,11 @@ using Owin;
 using System;
 using System.Threading.Tasks;
 
-[assembly: OwinStartup(typeof(LocalFileWebService.Startup1))]
+[assembly: OwinStartup(typeof(LocalFileWebService.Startup))]
 
 namespace LocalFileWebService
 {
-    public class Startup1
+    public class Startup
     {
         public void Configuration(IAppBuilder app)
         {
