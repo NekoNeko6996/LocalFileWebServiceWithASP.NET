@@ -151,7 +151,7 @@ namespace LocalFileWebService.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> UploadFiles()
+        public ActionResult UploadFiles()
         {
             MVCDBContext db = new MVCDBContext();
 
@@ -185,8 +185,7 @@ namespace LocalFileWebService.Controllers
 
             if (folderQuery.Count != folder_paths.Count)
             {
-                ViewBag.ErrorMessage = "One or more folders in the path are missing.";
-                return View();
+                return Json(new { success = false, message = "One or more folders in the path are missing." });
             }
 
             var lastFolderID = folderQuery.Last().FolderId;
@@ -203,34 +202,21 @@ namespace LocalFileWebService.Controllers
             var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".docx", ".mp4" };
             List<string> errorMessages = new List<string>();
 
-            //
-            SemaphoreSlim semaphore = new SemaphoreSlim(MAX_UPLOAD_FILE_IN_TIME); // Giới hạn tối đa 4 luồng
-
-            // Tạo danh sách các tác vụ xử lý file
-            List<Task> uploadTasks = new List<Task>();
-
             for (int count = 0; count < uploadedFiles.Count; count++)
             {
                 HttpPostedFileBase file = uploadedFiles[count];
                 if (file != null)
                 {
-                    uploadTasks.Add(Task.Run(async () =>
+                    try
                     {
-                        await semaphore.WaitAsync();
-                        try
-                        {
-                            await ProcessFile(file, allowedExtensions, uploadPath, user, db, lastFolderID, errorMessages);
-                        }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    }));
+                        ProcessFile(file, allowedExtensions, uploadPath, user, db, lastFolderID, errorMessages);
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMessages.Add($"Unexpected error processing file '{file.FileName}': {ex.Message}");
+                    }
                 }
             }
-
-            // Chờ tất cả các tác vụ hoàn thành
-            await Task.WhenAll(uploadTasks);
 
             if (errorMessages.Count > 0)
             {
@@ -240,7 +226,7 @@ namespace LocalFileWebService.Controllers
             return Json(new { success = true, message = "Files uploaded successfully." });
         }
 
-        private async Task ProcessFile(HttpPostedFileBase file, string[] allowedExtensions, string uploadPath, User user, MVCDBContext db, int lastFolderID, List<string> errorMessages)
+        private void ProcessFile(HttpPostedFileBase file, string[] allowedExtensions, string uploadPath, User user, MVCDBContext db, int lastFolderID, List<string> errorMessages)
         {
             try
             {
@@ -256,23 +242,10 @@ namespace LocalFileWebService.Controllers
                 string path = Path.Combine(uploadPath, fileName);
                 string mimeType = file.ContentType;
 
-                long totalBytes = file.ContentLength;
-                long uploadedBytes = 0;
-
-                // lấy tiến trình upload và lưu file
+                // Save file
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
-                    byte[] buffer = new byte[8192];
-                    int bytesRead;
-                    while ((bytesRead = await file.InputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                    {
-                        await fileStream.WriteAsync(buffer, 0, bytesRead);
-                        uploadedBytes += bytesRead;
-
-                        // Báo cáo tiến trình qua SignalR
-                        int progress = (int)((double)uploadedBytes / totalBytes * 100);
-                        //System.Diagnostics.Debug.WriteLine(progress);
-                    }
+                    file.InputStream.CopyTo(fileStream);
                 }
 
                 string thumbnailPath = null;
@@ -313,7 +286,7 @@ namespace LocalFileWebService.Controllers
                 };
 
                 db.FolderLinks.Add(folderLink);
-                await db.SaveChangesAsync();
+                db.SaveChanges();
             }
             catch (IOException ioEx)
             {
@@ -334,6 +307,7 @@ namespace LocalFileWebService.Controllers
                 errorMessages.Add($"Unexpected error processing file '{file.FileName}': {ex.Message}");
             }
         }
+
 
         [HttpPost]
         public ActionResult CreateFolder()
