@@ -334,5 +334,119 @@ namespace LocalFileWebService.Controllers
                 errorMessages.Add($"Unexpected error processing file '{file.FileName}': {ex.Message}");
             }
         }
+
+        [HttpPost]
+        public ActionResult CreateFolder()
+        {
+            string folderName = Request.Form.GetValues( "folder-name" )[0];
+            string folderPath = Request.Form.GetValues("folder-path")[0];
+
+            // Check user authentication
+            HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie == null)
+            {
+                return Json(new { success = false, message = "forbiden" });
+            }
+
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+            string userEmail = ticket.Name;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Json(new { success = false, message = "invalid cookie" });
+            }
+
+            MVCDBContext db = new MVCDBContext();
+            User user = db.Users.FirstOrDefault(u => u.UserEmail.Equals(userEmail));
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "user not found" });
+            }
+
+            List<string> list_path_folder = new List<string>();
+            list_path_folder.Add("root");
+
+            if(!string.IsNullOrEmpty(folderPath))
+            {
+                list_path_folder.AddRange(folderPath.Split('/'));
+            }
+
+            // find folder in db
+            var folders = db.Folders
+                            .Where(f => f.User.UserEmail.Equals(userEmail) && list_path_folder.Contains(f.FolderName))
+                            .ToList();
+
+            if (folders.Count != list_path_folder.Count)
+            {
+                return Json(new { success = false, message = "One or more folders in the path are missing." });
+            }
+
+            int folderParentId = folders.Last().FolderId;
+
+            Folder folder = new Folder
+            {
+                UserId = user.UserId,
+                FolderName = folderName,
+                FolderParentId = folderParentId,
+                FolderCreateAt = DateTime.Now,
+            };
+
+            db.Folders.Add(folder);
+            db.SaveChanges();
+
+            return Json(new { success = true, message = $"create new folder [{folderName}] successfully" });
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteFolder(int id, string name, string type, string folder_path)
+        {
+            List<string> validType = new List<string>();
+            validType.Add("folder");
+            validType.Add("source");
+
+            List<string> folderPath = new List<string>();
+            folderPath.Add("root");
+
+            if(!string.IsNullOrEmpty(folder_path))
+            {
+                folderPath.AddRange(folder_path.Split('/'));
+            }
+
+            HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (cookie == null)
+            {
+                return Json(new { success = false, message = "forbiden" });
+            }
+
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+            string userEmail = ticket.Name;
+
+            if (userEmail == null)
+            {
+                return Json(new { success = false, message = "invalid cookie" });
+            }
+
+            MVCDBContext db = new MVCDBContext();
+            User user = db.Users.FirstOrDefault(u => u.UserEmail.Equals(userEmail));
+
+            if (user == null) 
+            {
+                return Json(new { success = false, message = "user not found" });
+            }
+
+            if(!validType.Any(t => t.Equals(type)))
+            {
+                return Json(new { success = false, message = "invalid type of source" });
+            }
+
+            switch (type)
+            {
+                case "folder":
+                    break;
+            }
+
+            return Json(new { success = false, message = "." });
+        }
     }
 }

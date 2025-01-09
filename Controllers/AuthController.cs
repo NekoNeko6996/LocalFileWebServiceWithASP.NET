@@ -71,7 +71,7 @@ namespace LocalFileWebService.Controllers
                     // Lưu thông tin người dùng
                     User user = new User
                     {
-                        UserEmail = data.UserEmail,
+                        UserEmail = data.UserEmail.ToLower(),
                         UserHash = hashedPassword
                     };
                     db.Users.Add(user);

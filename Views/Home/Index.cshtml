@@ -12,7 +12,7 @@
         cursor: pointer;
     }
 
-    .floating-play-media-container-layer {
+    .floating-container-layer {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -67,6 +67,36 @@
         color: white;
         text-decoration: none !important;
     }
+
+    .create-new-folder-container {
+        width: 100%;
+        max-width: 550px;
+        height: 100%;
+        max-height: 190px;
+        background-color: #202427;
+        border-radius: 10px 10px 0 0;
+        padding: 20px;
+        color: white;
+    }
+
+    #contextMenu ul {
+        padding: 5px;
+        background-color: #f9f9f9;
+    }
+
+    #contextMenu ul li {
+        padding: 8px 12px;
+    }
+
+    #contextMenu ul li a {
+        text-decoration: none;
+        color: black;
+    }
+
+    #contextMenu ul li:hover {
+        background-color: #e8e8e8;
+    }
+
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
@@ -99,10 +129,10 @@
 @if (folders.Count > 0)
 {
     <h4 class="title text-white mt-2">Folders</h4>
-    <div class="d-flex flex-row flex-wrap foder-show-body" style="margin-top: 2rem; margin-bottom: 2rem;">
+    <div class="d-flex flex-row flex-wrap foder-show-body" style="margin-top: 2rem; margin-bottom: 2rem; gap: 10px;">
         @foreach (var folder in folders)
         {
-            <a href="?p=@(string.IsNullOrEmpty(folder_path) ? folder.FolderName : $"{folder_path}/{folder.FolderName}")">
+            <a href="?p=@(string.IsNullOrEmpty(folder_path) ? folder.FolderName : $"{folder_path}/{folder.FolderName}")" class="context-menu-target" data-item-id="folder-@folder.FolderName-@folder.FolderId">
                 <div class="d-flex flex-row p-2 flex-grow-0 align-items-center folder-container rounded border" style="width: 13rem; gap: 10px">
                     @if (string.IsNullOrEmpty(folder.FolderIconUrl))
                     {
@@ -138,7 +168,7 @@ else
         foreach (var source in sources)
         {
 
-            <div class="card bg-dark border-0" style="width: 18rem;">
+            <div class="card bg-dark border-0 context-menu-target" style="width: 18rem;" data-item-id="source-@source.SourceName-@source.SourceId">
                 @if (source.SourceType.Contains("image"))
                 {
                     <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
@@ -182,7 +212,7 @@ else
     }
 </div>
 
-<div class="floating-play-media-container-layer conatainer-display-hidden">
+<div class="floating-container-layer conatainer-display-hidden" id="view-media-container">
     <div class="play-media-container">
         <video controls autoplay class="rounded" id="video-source-element">
             <source src="" type="video/mp4">
@@ -190,6 +220,83 @@ else
         <h4 id="view-video-source-name" class="text-white mt-1"></h4>
     </div>
 </div>
+
+<div class="floating-container-layer justify-content-center align-items-center conatainer-display-hidden" id="create-new-folder-container">
+    <div class="create-new-folder-container rounded border">
+        <form action="/Home/CreateFolder" method="post" class="">
+            <label for="folder-name" class="col-form-label"><strong>Folder Name</strong></label>
+            <input type="text" name="folder-name" id="folder-name" class="form-control" required>
+            <input type="hidden" name="folder-path" value="@folder_path">
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Create Folder</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="contextMenu" class="rounded" style="display:none; position:absolute; z-index:1000; background:white; border:1px solid #ccc;">
+    <ul style="list-style:none; margin:0; padding:0;">
+        <li><a href="#" id="actionOption1" class="d-flex row align-items-center m-1" style="gap: 5px;"><span class="material-icons">delete</span> Delete</a></li>
+        <li><a href="#" id="actionOption2" class="d-flex row align-items-center m-1" style="gap: 5px;"><span class="material-icons">info</span> Properties</a></li>
+    </ul>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const contextMenu = document.getElementById("contextMenu");
+        let currentElementId = null;
+
+        // Gắn sự kiện contextmenu (chuột phải) cho tất cả các phần tử có class 'context-menu-target'
+        document.querySelectorAll(".context-menu-target").forEach(element => {
+            element.addEventListener("contextmenu", function (event) {
+                event.preventDefault();
+
+                // Lưu ID hoặc thông tin phần tử được nhấp
+                currentElementId = this.getAttribute("data-item-id");
+
+                // Hiển thị menu tại vị trí con trỏ
+                contextMenu.style.display = "block";
+                contextMenu.style.left = event.pageX + "px";
+                contextMenu.style.top = event.pageY - 60 + "px";
+            });
+        });
+
+        // Ẩn menu khi nhấp chuột bên ngoài
+        document.addEventListener("click", function (event) {
+            if (event.target.closest("#contextMenu") == null) {
+                contextMenu.style.display = "none";
+            }
+        });
+
+        // Xử lý các hành động trong menu
+        document.getElementById("actionOption1").addEventListener("click", function () {
+            const [type_, name_, id_] = currentElementId.split("-");
+            deleteFolder(id_, name_, type_);
+        });
+
+        document.getElementById("actionOption2").addEventListener("click", function () {
+            alert(`Option 2 selected for item ${currentElementId}`);
+            contextMenu.style.display = "none";
+        });
+    });
+
+    function deleteFolder(id_, name_, type_) {
+        if (confirm(`Are you sure you want to delete [${name_}]?`)) {
+            $.post("/Home/DeleteFolder", { id: id_, name: name_, type: type_ })
+                .done(function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                })
+                .fail(function () {
+                    alert("Request failed!");
+                });
+        }
+    }
+
+</script>
 
 <script>
     function onClickOpenViewVideo(url, name) {
@@ -203,7 +310,7 @@ else
         videoElement.load();
         document.querySelector("#view-video-source-name").innerText = name;
 
-        const container = document.querySelector(".floating-play-media-container-layer");
+        const container = document.querySelector("#view-media-container");
         container.classList.remove("conatainer-display-hidden");
         container.classList.add("conatainer-display-show");
 

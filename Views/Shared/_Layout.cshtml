@@ -14,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -137,9 +138,9 @@
             </div>
         </div>
         <div class="sub-button shadow">
-            <a href="google.com" target="_blank">
+            <button type="button" class="btn btn-primary rounded" onclick="showCreateFolderContainer()">
                 <span class="material-icons">folder</span>
-            </a>
+            </button>
         </div>
         <div class="sub-button shadow">
             <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#uploadFileModal">
@@ -256,6 +257,20 @@
                     alert('Upload failed! Please try again.');
                 });
 
+        });
+
+        function showCreateFolderContainer() {
+            const container = document.querySelector("#create-new-folder-container");
+            container.classList.remove("conatainer-display-hidden");
+            container.classList.add("conatainer-display-show");
+        }
+
+        const container = document.querySelector("#create-new-folder-container");
+        container.addEventListener("click", (e) => {
+            if (!e.target.closest(".create-new-folder-container")) {
+                container.classList.remove("conatainer-display-show");
+                container.classList.add("conatainer-display-hidden");
+            }
         });
     </script>
 
