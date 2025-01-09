@@ -32,14 +32,13 @@ namespace LocalFileWebService.Class
 
         public static MediaInfomation GetMediaInfo(string filePath)
         {
-            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfoWrapper(filePath);
-            
-            // Lấy các thông tin cơ bản
+            var mediaAnalysis = FFProbe.Analyse(filePath);
+
             return new MediaInfomation
             {
-                Duration = mediaInfo.Duration,
-                Size = mediaInfo.Size,
-                FrameRate = mediaInfo.Framerate,
+                Duration = (int)mediaAnalysis.Duration.TotalSeconds,
+                Size = new FileInfo(filePath).Length,
+                FrameRate = mediaAnalysis.PrimaryVideoStream.FrameRate
             };
         }
     }

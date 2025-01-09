@@ -60,6 +60,21 @@
             border-bottom: 1px solid #ddd;
         }
 
+        .progress {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            background-color: #4caf50;
+            color: white;
+        }
     </style>
 </head>
 <body id="body-pd" class="bg-dark">
@@ -127,18 +142,18 @@
             </a>
         </div>
         <div class="sub-button shadow">
-            <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#exampleModal">
+            <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#uploadFileModal">
                 <span class="material-icons">upload</span>
             </button>
         </div>
     </div>
 
     @*floating upload file modal*@
-    <div class="modal fade w-100" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade w-100" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Upload File</h5>
+                    <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -150,11 +165,11 @@
                     </div>
                     <br />
                     <div>
-                        <button id="uploadButton" class="btn btn-primary">Upload</button>
+                        <button id="uploadButton" class="btn btn-primary" data-toggle="modal" data-target="#uploadFileModal">Upload</button>
                     </div>
                     <br />
-                        <div id="fileList"></div>
-                    </div>
+                    <div id="fileList"></div>
+                </div>
                 
             </div>
         </div>
@@ -231,6 +246,7 @@
                         alert('Upload successful!');
                         fileList.innerHTML = ''; // Xóa danh sách file sau khi upload thành công
                         filesToUpload = [];
+                        window.location.reload();
                     } else {
                         alert('Error: ' + data.message);
                     }

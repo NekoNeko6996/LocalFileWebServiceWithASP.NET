@@ -37,11 +37,11 @@
         padding: 10px;
     }
 
-    .play-media-container > video {
-        width: 100%;
-        aspect-ratio: 16/9;
-        cursor: pointer;
-    }
+        .play-media-container > video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+        }
 
     .conatainer-display-hidden {
         display: none !important;
@@ -57,7 +57,6 @@
         text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
         margin: 5px 0 5px 0;
         text-align: left;
-
     }
 
     .folder-name:active {
@@ -68,12 +67,11 @@
         color: white;
         text-decoration: none !important;
     }
-
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
     <h6 class="title rounded directory-show text-white m-0">
-        <a href="/Home/Index" class="text-decoration-none text-white">Root</a> 
+        <a href="/Home/Index" class="text-decoration-none text-white">Root</a>
         @{
             if (!string.IsNullOrEmpty(folder_path))
             {
@@ -134,12 +132,12 @@ else
         <input type="checkbox" name="auto-play-checkbox" id="auto-play-checkbox">
     </div>
 </div>
-<div class="d-flex flex-row flex-wrap" id="card-container" style="margin-top: 2rem; margin-bottom: 2rem;">
+<div class="d-flex flex-row flex-wrap" id="card-container" style="margin-top: 2rem; margin-bottom: 2rem; gap: 10px;">
     @if (sources.Count > 0)
     {
         foreach (var source in sources)
         {
-            
+
             <div class="card bg-dark border-0" style="width: 18rem;">
                 @if (source.SourceType.Contains("image"))
                 {
@@ -153,9 +151,9 @@ else
                     </button>
                     <div class="d-flex flex-row align-items-center justify-content-between">
                         <p href="/Home/GetFile/@source.SourceId" class="file-display-name text-white flex-grow-1" style="font-size: .8rem; text-decoration: none;">@source.SourceName</p>
-                        
+
                     </div>
-                   
+
                 }
                 else if (source.SourceType.Contains("audio"))
                 {
@@ -172,7 +170,7 @@ else
                     </div>
                 }
             </div>
-            
+
         }
     }
     else
@@ -194,7 +192,6 @@ else
 </div>
 
 <script>
-
     function onClickOpenViewVideo(url, name) {
         const videoElement = document.getElementById("video-source-element");
         if (document.getElementById("auto-play-checkbox").checked) {
