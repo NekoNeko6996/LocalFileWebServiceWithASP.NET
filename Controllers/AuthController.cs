@@ -34,7 +34,6 @@ namespace LocalFileWebService.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            string token = (string) Session["token"];
             ViewBag.currentBody = "login";
             return View();
         }
