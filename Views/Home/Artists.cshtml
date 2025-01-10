@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Artists";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .show-user-container {
+        gap: 10px;
+    }
+
+    .show-user-card {
+        width: 10rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .show-user-card > img {
+        width: 100%;
+        aspect-ratio: 1/1;
+    }
+
+    .show-user-card > p {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+<h4 class="title text-white mt-2">Artists</h4>
+<div class="d-flex flex-row show-user-container">
+    @if (ViewBag.Artists != null)
+    {
+        foreach (LocalFileWebService.Models.Artist artist in ViewBag.Artists)
+        {
+            <a href="/Home/Artist/@artist.ArtistId">
+                <div class="show-user-card card bg-transparent">
+                    <img src="@artist.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded" />
+                    <p class="card-text text-white">@artist.ArtistName</p>
+                </div>
+            </a>
+        }
+    }
+</div>

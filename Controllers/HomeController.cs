@@ -7,25 +7,15 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using LocalFileWebService.Models;
-using Newtonsoft.Json;
 using LocalFileWebService.Class;
-using FFMpegCore;
-using System.Web.WebPages;
-using MediaInfo;
-using MediaInfo.DotNetWrapper;
 using System.Web.UI.WebControls;
 using System.Data.Entity.Validation;
-using System.Threading.Tasks;
-using System.Threading;
-using Microsoft.AspNet.SignalR;
 
 namespace LocalFileWebService.Controllers
 {
     [System.Web.Mvc.Authorize]
     public class HomeController : Controller
     {
-        private int MAX_UPLOAD_FILE_IN_TIME = 4;
-
         // GET: Home
         public ActionResult Index()
         {
@@ -83,6 +73,40 @@ namespace LocalFileWebService.Controllers
             ViewBag.Folders = foldersChildren;
             ViewBag.Sources = sources;
 
+            return View();
+        }
+
+        public ActionResult Artists()
+        {
+            MVCDBContext db = new MVCDBContext();
+            List<Artist> artists = db.Artists.ToList();
+
+            ViewBag.Artists = artists;
+            return View();
+        }
+
+        public ActionResult Artist(int id = -1)
+        {
+
+
+            if (id == -1)
+            {
+                ViewBag.Status = "error";
+                ViewBag.Message = "Invalid Artist Id";
+                return View();
+            }
+
+            MVCDBContext db = new MVCDBContext();
+            Artist artists = db.Artists.FirstOrDefault(a => a.ArtistId.Equals(id));
+
+            if (artists == null)
+            {
+                ViewBag.Status = "error";
+                ViewBag.Message = "Artists Not Found";
+                return View();
+            }
+
+            ViewBag.Artists = artists;
             return View();
         }
 

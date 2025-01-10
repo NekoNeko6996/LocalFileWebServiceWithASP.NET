@@ -1,6 +1,5 @@
 ﻿@{ 
-    string color_mode = "dark";
-    
+    string url_path = Request.Url.AbsolutePath.ToLower();
 }
 
 <!DOCTYPE html>
@@ -76,6 +75,26 @@
             background-color: #4caf50;
             color: white;
         }
+
+        .nav_logo {
+            color: #fff;
+            border-left: 3px solid black;
+        }
+
+
+        .nav_link {
+            border-left: 3px solid black;
+        }
+
+        .nav_link:hover {
+            color: white !important;
+            text-decoration: none !important;
+        }
+
+        .left-nav-active {
+            border-left: 3px solid #007bff;
+            color: white;
+        }
     </style>
 </head>
 <body id="body-pd" class="bg-dark">
@@ -89,22 +108,22 @@
     <div class="l-navbar bg-black" id="nav-bar">
         <nav class="nav">
             <div>
-                <a href="#" class="nav_logo">
+                <div class="nav_logo">
                     <i class='bx bx-layer nav_logo-icon'></i>
-                    <span class="nav_logo-name">BBBootstrap</span>
-                </a>
+                    <span class="nav_logo-name">File Manager</span>
+                </div>
                 <div class="nav_list">
-                    <a href="#" class="nav_link active">
-                        <i class='bx bx-grid-alt nav_icon'></i>
-                        <span class="nav_name">Dashboard</span>
+                    <a href="/Home/Index" class="nav_link @(url_path.Contains("/home/index") || url_path.Equals("/") ? "left-nav-active" : "")">
+                        <i class="bx bx-folder nav_icon"></i>
+                        <span class="nav_name">Files</span>
                     </a>
-                    <a href="#" class="nav_link">
+                    <a href="/Home/Artists" class="nav_link  @(url_path.Contains("/home/artists") || url_path.Contains("/home/artist") ? "left-nav-active" : "")">
                         <i class='bx bx-user nav_icon'></i>
                         <span class="nav_name">Users</span>
                     </a>
                     <a href="#" class="nav_link">
-                        <i class='bx bx-message-square-detail nav_icon'></i>
-                        <span class="nav_name">Messages</span>
+                        <i class='bx bx-search nav_icon'></i>
+                        <span class="nav_name">Finds</span>
                     </a>
                     <a href="#" class="nav_link">
                         <i class='bx bx-bookmark nav_icon'></i>
@@ -275,7 +294,6 @@
     </script>
 
     <script>
-
         document.addEventListener("DOMContentLoaded", function (event) {
 
             const showNavbar = (toggleId, navId, bodyId, headerId) => {
@@ -306,8 +324,8 @@
 
             function colorLink() {
                 if (linkColor) {
-                    linkColor.forEach(l => l.classList.remove('active'))
-                    this.classList.add('active')
+                    linkColor.forEach(l => l.classList.remove('left-nav-active'))
+                    this.classList.add('left-nav-active')
                 }
             }
             linkColor.forEach(l => l.addEventListener('click', colorLink))

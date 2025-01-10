@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "Artist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .show-user-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .show-user-card {
+        width: 10rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .show-user-card > img {
+        width: 10rem;
+        aspect-ratio: 1/1;
+    }
+
+    .show-user-card > p {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .link-container {
+        padding-left: 10px;
+        padding-right: 10px;
+        border-left: 1px solid white;
+        color: white;
+        max-width: 100%;
+    }
+
+    .link-a, .link-p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 600px;
+        width: 100%;
+    }
+</style>
+
+@if (ViewBag.status != null && ViewBag.status == "error")
+{
+    <div class="alert-danger p-3 rounded">
+        @ViewBag.message
+    </div>
+}
+
+
+@if (ViewBag.Artists != null)
+{
+    <div class="d-flex flex-row show-user-container rounded">
+        <div class="show-user-card card bg-transparent border-0">
+            <img src="@ViewBag.Artists.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded" />
+            <p class="card-text text-white">@ViewBag.Artists.ArtistName</p>
+        </div>
+        <div class="link-container">
+            <div class="d-flex flex-row" style="gap: 15px;">
+                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
+                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
+            </div>
+            <div class="d-flex flex-row" style="gap: 15px;">
+                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
+                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
+            </div>
+            <div class="d-flex flex-row" style="gap: 15px;">
+                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
+                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
+            </div>
+        </div>
+    </div>
+}

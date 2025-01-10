@@ -37,11 +37,11 @@
         padding: 10px;
     }
 
-        .play-media-container > video {
-            width: 100%;
-            aspect-ratio: 16/9;
-            cursor: pointer;
-        }
+    .play-media-container > video {
+        width: 100%;
+        aspect-ratio: 16/9;
+        cursor: pointer;
+    }
 
     .conatainer-display-hidden {
         display: none !important;
@@ -97,6 +97,46 @@
         background-color: #e8e8e8;
     }
 
+    .show-img-thumbnail-container {
+        width: 10rem;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .show-img-thumbnail {
+    }
+
+    #zoom-image-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        cursor: grab;
+        z-index: 1000;
+    }
+
+    #zoom-image-container button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        width: 30px;
+        aspect-ratio: 1/1;
+    }
+
+    #zoom-image-view {
+        position: absolute;
+        max-width: 100%;
+        max-height: 100%;
+        transform-origin: center center;
+        transition: transform 0.1s ease;
+    }
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
@@ -168,14 +208,16 @@ else
         foreach (var source in sources)
         {
 
-            <div class="card bg-dark border-0 context-menu-target" style="width: 18rem;" data-item-id="source-@source.SourceName-@source.SourceId">
+            <div class="card bg-dark border-0 context-menu-target" data-item-id="source-@source.SourceName-@source.SourceId">
                 @if (source.SourceType.Contains("image"))
                 {
-                    <img src="/Home/GetFile/@source.SourceId" class="card-img-top rounded" alt="...">
+                    <button class="show-img-thumbnail-container rounded border-0 p-0" onclick="onClickViewImg('/Home/GetFile/@(source.SourceId)')">
+                        <img src="/Home/GetFile/@source.SourceId" class="card-img-top show-img-thumbnail" alt="...">
+                    </button>
                 }
                 else if (source.SourceType.Contains("video"))
                 {
-                    <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
+                    <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40; width: 18rem;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
                         <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
                         <p class="text-white bg-dark m-0 position-absolute" style="font-size:.8rem; padding: 0 5px 0 5px; top: 5px; right: 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
                     </button>
@@ -240,6 +282,63 @@ else
         <li><a href="#" id="actionOption2" class="d-flex row align-items-center m-1" style="gap: 5px;"><span class="material-icons">info</span> Properties</a></li>
     </ul>
 </div>
+
+<div id="zoom-image-container">
+    <button class="position-absolute bg-transparent border-0 text-white" style="top: 10px; right: 10px;" onclick="onClickCloseViewImg()"><span class="material-icons">close</span></button>
+    <img src="/Home/GetFile/20" alt="Zoomable Image" id="zoom-image-view">
+</div>
+
+<script>
+    const container = document.getElementById('zoom-image-container');
+    const img = document.getElementById('zoom-image-view');
+
+    let scale = 1;
+    let startX = 0, startY = 0;
+    let translateX = 0, translateY = 0;
+    let isDragging = false;
+
+    // Zoom with mouse wheel
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        scale = Math.min(Math.max(scale + delta, 0.5), 5); // Limit zoom between 0.5x and 5x
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+
+    // Drag to move image
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        container.style.cursor = 'grabbing';
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+
+    container.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    container.addEventListener('mouseleave', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    function onClickCloseViewImg() {
+        container.style.display = 'none';
+    }
+
+    function onClickViewImg(url) {
+        img.src = url;
+        container.style.display = 'flex';
+    }
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

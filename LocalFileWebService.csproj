@@ -337,6 +337,8 @@
     <Content Include="Views\Shared\_AuthLayout.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\Auth\SignUp.cshtml" />
+    <Content Include="Views\Home\Artists.cshtml" />
+    <Content Include="Views\Home\Artist.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
