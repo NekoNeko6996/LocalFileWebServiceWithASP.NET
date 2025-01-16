@@ -1,0 +1,85 @@
+﻿.border-color-w {
+    border-color: white;
+}
+
+.input-form-b-b {
+    border: none;
+    border-bottom: 1px solid white;
+}
+
+.input-form-bg-transparent {
+    background-color: transparent;
+}
+
+.border-radius-0 {
+    border-radius: 0;
+}
+
+.transparent-input-forcus:focus {
+    background-color: transparent;
+}
+
+.select-transparent {
+    background-color: transparent;
+}
+
+/* Tùy chỉnh select */
+.custom-scroll {
+    overflow-y: auto; /* Đảm bảo thanh cuộn xuất hiện nếu cần */
+}
+
+    /* Tùy chỉnh thanh cuộn - chỉ hoạt động trên Webkit */
+    .custom-scroll::-webkit-scrollbar {
+        width: 8px; /* Độ rộng của thanh cuộn */
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+        background-color: #007bff; /* Màu của thanh cuộn */
+        border-radius: 4px; /* Bo góc của thanh cuộn */
+    }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: #0056b3; /* Màu khi hover vào thanh cuộn */
+        }
+
+    .custom-scroll::-webkit-scrollbar-track {
+        background-color: #f0f0f0; /* Màu nền của track thanh cuộn */
+        border-radius: 4px; /* Bo góc của track */
+    }
+
+.custom-ul li {
+    list-style-type: none; /* Ẩn dấu chấm trước mỗi item */
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+    .custom-ul li:hover {
+        background-color: #5dabff66;
+    }
+
+.one-line-text {
+    white-space: nowrap; /* Ngăn xuống dòng */
+    overflow: hidden; /* Ẩn nội dung thừa */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
+}
+
+
+.file-info-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* Chia layout thành 2 cột đều nhau */
+    gap: 20px; /* Khoảng cách giữa các cột */
+    align-items: start; /* Căn chỉnh nội dung theo chiều dọc */
+}
+
+/* Khi màn hình nhỏ hơn 768px, đổi sang layout 1 cột */
+@media (max-width: 768px) {
+    .file-info-container {
+        grid-template-columns: 1fr; /* Chuyển về 1 cột */
+    }
+}

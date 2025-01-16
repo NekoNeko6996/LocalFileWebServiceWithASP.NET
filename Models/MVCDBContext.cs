@@ -8,7 +8,7 @@ namespace LocalFileWebService.Models
 
         public DbSet<User> Users { get; set; }
         public DbSet<Artist> Artists { get; set; }
-        public DbSet<Tag> tags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<Folder> Folders { get; set; }
         public DbSet<FolderLink> FolderLinks { get; set; }

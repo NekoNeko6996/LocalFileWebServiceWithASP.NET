@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using LocalFileWebService.Models;
-using LocalFileWebService.Class;
 using System.Web.UI.WebControls;
-using System.Data.Entity.Validation;
+using Newtonsoft.Json;
+using LocalFileWebService.Class;
+using Microsoft.Owin.Security;
 
 namespace LocalFileWebService.Controllers
 {
     [System.Web.Mvc.Authorize]
     public class HomeController : Controller
     {
+        private readonly string DefaultArtistAvatarUrls = "/Content/Resources/Default/Img/_z5862484494155_3d8ec334ae9dfa5829f4e47d070d8dfd.jpg";
+
         // GET: Home
         public ActionResult Index()
         {
@@ -81,6 +83,7 @@ namespace LocalFileWebService.Controllers
             MVCDBContext db = new MVCDBContext();
             List<Artist> artists = db.Artists.ToList();
 
+            ViewBag.DefaultArtistAvatarUrls = DefaultArtistAvatarUrls;
             ViewBag.Artists = artists;
             return View();
         }
@@ -98,6 +101,7 @@ namespace LocalFileWebService.Controllers
 
             MVCDBContext db = new MVCDBContext();
             Artist artists = db.Artists.FirstOrDefault(a => a.ArtistId.Equals(id));
+            List<Source> sources = db.Sources.Where(s => s.Artist.ArtistId.Equals(id)).ToList();
 
             if (artists == null)
             {
@@ -106,6 +110,32 @@ namespace LocalFileWebService.Controllers
                 return View();
             }
 
+            ViewBag.DefaultArtistAvatarUrls = DefaultArtistAvatarUrls;
+            ViewBag.Artists = artists;
+            ViewBag.Sources = sources;
+            return View();
+        }
+
+        public ActionResult UploadFiles()
+        {
+            HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+
+            string userEmail = ticket.Name;
+
+            MVCDBContext db = new MVCDBContext();
+            List<Artist> artists = db.Artists.ToList() ?? new List<Artist>();
+            List<Tag> tags = db.Tags.ToList() ?? new List<Tag>();
+            List<Folder> folders = db.Folders.Where(f => f.User.UserEmail.Equals(userEmail)).ToList() ?? new List<Folder>();
+            Folder folder = db.Folders.FirstOrDefault(f => f.FolderName.Equals("root") && f.User.UserEmail.Equals(userEmail));
+
+            ViewBag.RootFolderId = folder.FolderId;
+            ViewBag.RootFolder = folder;
+            ViewBag.Folders = folders;
+            ViewBag.DefaultArtist = 6;
+            
+
+            ViewBag.Tags = tags;
             ViewBag.Artists = artists;
             return View();
         }
@@ -175,160 +205,73 @@ namespace LocalFileWebService.Controllers
 
 
         [HttpPost]
-        public ActionResult UploadFiles()
+        public ActionResult _UploadFiles()
         {
-            MVCDBContext db = new MVCDBContext();
+            string uploadTo = Request.Form["path"] ?? string.Empty;
 
-            // Check user authentication
+            // Convert HttpFileCollectionBase to List<HttpPostedFileBase>
+            var uploadedFiles = new List<HttpPostedFileBase>();
+            for (int i = 0; i < Request.Files.Count; i++)
+            {
+                uploadedFiles.Add(Request.Files[i]);
+            }
+
+            string filesInfoJson = Request.Form["filesInfo"];
+
+            if (uploadTo.Contains(".."))
+            {
+                return Json(new { success = false, message = "Invalid upload path." });
+            }
+
             HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
             if (cookie == null)
             {
-                return Json(new { success = false, message = "User not allowed" });
+                return Json(new { success = false, message = "User not authenticated." });
             }
 
-            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
-            string userEmail = ticket.Name;
-            User user = db.Users.Where(u => u.UserEmail.ToLower().Equals(userEmail.ToLower())).FirstOrDefault();
-
-            if (user == null)
-            {
-                return Json(new { success = false, message = "User not found" });
-            }
-
-            string folder_path_params = Request.Params["p"] ?? string.Empty;
-            List<string> folder_paths = new List<string> { "root" };
-
-            if (!string.IsNullOrEmpty(folder_path_params))
-            {
-                folder_paths.AddRange(folder_path_params.Split('/').ToList());
-            }
-
-            var folderQuery = db.Folders
-                            .Where(folder => folder.User.UserEmail.Equals(userEmail) && folder_paths.Contains(folder.FolderName))
-                            .ToList();
-
-            if (folderQuery.Count != folder_paths.Count)
-            {
-                return Json(new { success = false, message = "One or more folders in the path are missing." });
-            }
-
-            var lastFolderID = folderQuery.Last().FolderId;
-            string userFolder = $"[{user.UserId}]/root/{folder_path_params}";
-            string uploadPath = Path.Combine(Server.MapPath("~/UploadFiles"), userFolder);
-
-            // Create directory if not exists
-            if (!Directory.Exists(uploadPath))
-            {
-                Directory.CreateDirectory(uploadPath);
-            }
-
-            var uploadedFiles = Request.Files;
-            var allowedExtensions = new[] { ".jpg", ".png", ".pdf", ".docx", ".mp4" };
-            List<string> errorMessages = new List<string>();
-
-            for (int count = 0; count < uploadedFiles.Count; count++)
-            {
-                HttpPostedFileBase file = uploadedFiles[count];
-                if (file != null)
-                {
-                    try
-                    {
-                        ProcessFile(file, allowedExtensions, uploadPath, user, db, lastFolderID, errorMessages);
-                    }
-                    catch (Exception ex)
-                    {
-                        errorMessages.Add($"Unexpected error processing file '{file.FileName}': {ex.Message}");
-                    }
-                }
-            }
-
-            if (errorMessages.Count > 0)
-            {
-                return Json(new { success = false, message = string.Join(", ", errorMessages) });
-            }
-
-            return Json(new { success = true, message = "Files uploaded successfully." });
-        }
-
-        private void ProcessFile(HttpPostedFileBase file, string[] allowedExtensions, string uploadPath, User user, MVCDBContext db, int lastFolderID, List<string> errorMessages)
-        {
+            FormsAuthenticationTicket ticket;
             try
             {
-                string fileExtension = Path.GetExtension(file.FileName);
-                if (!allowedExtensions.Contains(fileExtension.ToLower()))
-                {
-                    errorMessages.Add($"File type '{fileExtension}' is not allowed.");
-                    return;
-                }
-
-                string fileNameWithoutEx = Path.GetFileNameWithoutExtension(file.FileName);
-                string fileName = $"{fileNameWithoutEx}{fileExtension}";
-                string path = Path.Combine(uploadPath, fileName);
-                string mimeType = file.ContentType;
-
-                // Save file
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    file.InputStream.CopyTo(fileStream);
-                }
-
-                string thumbnailPath = null;
-                if (mimeType.Contains("video"))
-                {
-                    string thumbnailFolder = Path.Combine(Server.MapPath($"~/UploadFiles/[{user.UserId}]/thumbnail/"));
-                    if (!Directory.Exists(thumbnailFolder))
-                    {
-                        Directory.CreateDirectory(thumbnailFolder);
-                    }
-
-                    string thumbnailName = $"{Guid.NewGuid()}.png";
-                    Media.GetThumbnail(path, thumbnailFolder, thumbnailName);
-                    thumbnailPath = Path.Combine(thumbnailFolder, thumbnailName);
-                }
-
-                int mediaDuration = Media.GetMediaInfo(path).Duration;
-
-                Source fileInfo = new Source
-                {
-                    UserId = user.UserId,
-                    SourceName = fileNameWithoutEx,
-                    SourceType = string.IsNullOrEmpty(mimeType) ? "application/octet-stream" : mimeType,
-                    ArtistId = 6,
-                    UploadTime = DateTime.Now,
-                    SourceUrl = path,
-                    SourceThumbnailPath = string.IsNullOrEmpty(thumbnailPath) ? null : thumbnailPath,
-                    SourceLength = mimeType.Contains("mp4") || mimeType.Contains("audio") ? mediaDuration : 0
-                };
-
-                db.Sources.Add(fileInfo);
-
-                FolderLink folderLink = new FolderLink
-                {
-                    FolderId = lastFolderID,
-                    SourceId = fileInfo.SourceId,
-                    FolderLinkCreateAt = DateTime.Now
-                };
-
-                db.FolderLinks.Add(folderLink);
-                db.SaveChanges();
-            }
-            catch (IOException ioEx)
-            {
-                errorMessages.Add($"I/O error processing file '{file.FileName}': {ioEx.Message}");
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        errorMessages.Add($"DB validation error: Property: {validationError.PropertyName}, Error: {validationError.ErrorMessage}");
-                    }
-                }
+                ticket = FormsAuthentication.Decrypt(cookie.Value);
             }
             catch (Exception ex)
             {
-                errorMessages.Add($"Unexpected error processing file '{file.FileName}': {ex.Message}");
+                return Json(new { success = false, message = $"Authentication error: {ex.Message}" });
+            }
+
+            string userEmail = ticket.Name;
+            using (var db = new MVCDBContext())
+            {
+                var user = db.Users.FirstOrDefault(u => u.UserEmail.ToLower() == userEmail.ToLower());
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found." });
+                }
+
+                if (string.IsNullOrEmpty(filesInfoJson))
+                {
+                    return Json(new { success = false, message = "No file information provided." });
+                }
+
+                List<FormUploadFilesInfo> fileInfo;
+                try
+                {
+                    fileInfo = JsonConvert.DeserializeObject<List<FormUploadFilesInfo>>(filesInfoJson);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = $"Invalid JSON format: {ex.Message}" });
+                }
+
+                string absolutePath = Server.MapPath("~/UploadFiles/");
+                var manager = new FileManager(fileInfo, uploadedFiles, uploadTo, absolutePath, user, db);
+
+                var result = manager.save();
+                return Json(new
+                {
+                    success = result.Success,
+                    message = result.Message
+                });
             }
         }
 
@@ -360,6 +303,11 @@ namespace LocalFileWebService.Controllers
             if (user == null)
             {
                 return Json(new { success = false, message = "user not found" });
+            }
+
+            if(folderName.ToLower().Equals("root"))
+            {
+                return Json(new { success = false, message = "invalid folder name" });
             }
 
             List<string> list_path_folder = new List<string>();

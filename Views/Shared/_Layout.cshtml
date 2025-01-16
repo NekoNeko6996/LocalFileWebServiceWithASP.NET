@@ -6,95 +6,26 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="~/Content/css/_Layout.css">
-    <link rel="stylesheet" href="~/Content/">
-    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local File Service</title>
 
-    <style>
-        .modal-backdrop {
-            width: 100%;
-        }
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-        .modal-body {
-            box-sizing: border-box;
-        }
+    <!-- Boxicons -->
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-        .ellipsis {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-        .upload-file-list {
-            width: 100%;
-            overflow: hidden;
-        }
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-        .uploadfile-tbody {
-            overflow: hidden;
-        }
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        th {
-            overflow: hidden;
-        }
-
-        td {
-            overflow: hidden;
-        }
-
-        #fileList li {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding: 5px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .progress {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-            background-color: #4caf50;
-            color: white;
-        }
-
-        .nav_logo {
-            color: #fff;
-            border-left: 3px solid black;
-        }
-
-
-        .nav_link {
-            border-left: 3px solid black;
-        }
-
-            .nav_link:hover {
-                color: white !important;
-                text-decoration: none !important;
-            }
-
-        .left-nav-active {
-            border-left: 3px solid #007bff;
-            color: white;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/LayoutPage.css")">
 </head>
 <body id="body-pd" class="bg-dark">
     <header class="header" id="header">
@@ -148,27 +79,8 @@
         @RenderBody()
     </div>
 
-    @*floating add button*@
-    <div class="fab-container">
-        <div class="fab shadow">
-            <div class="fab-content">
-                <span class="material-icons">list</span>
-            </div>
-        </div>
-        <div class="sub-button shadow">
-            <button type="button" class="btn btn-primary rounded" onclick="showCreateFolderContainer()">
-                <span class="material-icons">folder</span>
-            </button>
-        </div>
-        <div class="sub-button shadow">
-            <button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#uploadFileModal">
-                <span class="material-icons">upload</span>
-            </button>
-        </div>
-    </div>
-
     @*floating upload file modal*@
-    <div class="modal fade w-100" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+    <!--<div class="modal fade w-100" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -189,147 +101,142 @@
                     <br />
                     <div id="fileList"></div>
                 </div>
-                
+
             </div>
+        </div>
+    </div>-->
+
+    <div id="zoom-image-container">
+        <button class="position-absolute bg-transparent border-0 text-white" style="top: 10px; right: 10px;" onclick="onClickCloseViewImg()"><span class="material-icons">close</span></button>
+        <img src="/Home/GetFile/20" alt="Zoomable Image" id="zoom-image-view">
+    </div>
+
+    <div class="floating-container-layer container-display-hidden" id="view-media-container">
+        <div class="play-media-container">
+            <video controls autoplay class="rounded" id="video-source-element">
+                <source src="" type="video/mp4">
+            </video>
+            <h4 id="view-video-source-name" class="text-white mt-1"></h4>
         </div>
     </div>
 
-
+    @*// Script 1: Video View Functionality*@
     <script>
-        // Kéo thả
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const fileList = document.getElementById('fileList');
-        let filesToUpload = [];
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = "#00b300";
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.borderColor = "#007bff";
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = "#007bff";
-
-            const files = Array.from(e.dataTransfer.files);
-            handleFiles(files);
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            handleFiles(files);
-        });
-
-        function handleFiles(files) {
-            files.forEach((file) => {
-                if (filesToUpload.some(f => f.name === file.name)) {
-                    alert(`File ${file.name} is already added.`);
-                    return;
-                }
-
-                filesToUpload.push(file);
-                const listItem = document.createElement('li');
-                listItem.textContent = file.name;
-                listItem.classList.add('ellipsis');
-                fileList.appendChild(listItem);
-            });
-        }
-
-
-        // Upload Files
-        document.getElementById('uploadButton').addEventListener('click', () => {
-            const formData = new FormData();
-            filesToUpload.forEach(file => {
-                formData.append('files', file);
-            });
-
-            const url = new URL(window.location.href);
-            const path = url.searchParams.get("p") || null;
-
-            fetch(`/Home/UploadFiles${path ? "?p=" + encodeURIComponent(path) : ""}`, {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error("Upload failed");
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('Upload successful!');
-                        fileList.innerHTML = ''; // Xóa danh sách file sau khi upload thành công
-                        filesToUpload = [];
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Upload failed! Please try again.');
-                });
-
-        });
-
-        function showCreateFolderContainer() {
-            const container = document.querySelector("#create-new-folder-container");
-            container.classList.remove("conatainer-display-hidden");
-            container.classList.add("conatainer-display-show");
-        }
-
-        const container = document.querySelector("#create-new-folder-container");
-        container.addEventListener("click", (e) => {
-            if (!e.target.closest(".create-new-folder-container")) {
-                container.classList.remove("conatainer-display-show");
-                container.classList.add("conatainer-display-hidden");
+        function onClickOpenViewVideo(url, name) {
+            const videoElement = document.getElementById("video-source-element");
+            if (document.getElementById("auto-play-checkbox").checked) {
+                videoElement.autoplay = true;
+            } else {
+                videoElement.autoplay = false;
             }
-        });
+            videoElement.src = url;
+            videoElement.load();
+            document.querySelector("#view-video-source-name").innerText = name;
+
+            const videoContainer = document.querySelector("#view-media-container");
+            videoContainer.classList.remove("container-display-hidden");
+            videoContainer.classList.add("container-display-show");
+
+            videoContainer.addEventListener("click", (e) => {
+                if (!e.target.closest(".play-media-container")) {
+                    videoContainer.classList.remove("container-display-show");
+                    videoContainer.classList.add("container-display-hidden");
+                    videoElement.pause();
+                }
+            });
+        }
     </script>
 
+    @*// Script 2: Zoomable Image View Functionality*@
     <script>
-        document.addEventListener("DOMContentLoaded", function (event) {
+        const zoomContainer = document.getElementById('zoom-image-container');
+        const zoomImg = document.getElementById('zoom-image-view');
 
-            const showNavbar = (toggleId, navId, bodyId, headerId) => {
-                const toggle = document.getElementById(toggleId),
-                    nav = document.getElementById(navId),
-                    bodypd = document.getElementById(bodyId),
-                    headerpd = document.getElementById(headerId)
+        let zoomScale = 1;
+        let zoomStartX = 0, zoomStartY = 0;
+        let zoomTranslateX = 0, zoomTranslateY = 0;
+        let isZoomDragging = false;
+
+        // Zoom with mouse wheel
+        zoomContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoomScale = Math.min(Math.max(zoomScale + delta, 0.5), 5); // Limit zoom between 0.5x and 5x
+            zoomImg.style.transform = `translate(${zoomTranslateX}px, ${zoomTranslateY}px) scale(${zoomScale})`;
+        });
+
+        // Drag to move image
+        zoomContainer.addEventListener('mousedown', (e) => {
+            isZoomDragging = true;
+            zoomStartX = e.clientX - zoomTranslateX;
+            zoomStartY = e.clientY - zoomTranslateY;
+            zoomContainer.style.cursor = 'grabbing';
+        });
+
+        zoomContainer.addEventListener('mousemove', (e) => {
+            if (!isZoomDragging) return;
+            zoomTranslateX = e.clientX - zoomStartX;
+            zoomTranslateY = e.clientY - zoomStartY;
+            zoomImg.style.transform = `translate(${zoomTranslateX}px, ${zoomTranslateY}px) scale(${zoomScale})`;
+        });
+
+        zoomContainer.addEventListener('mouseup', () => {
+            isZoomDragging = false;
+            zoomContainer.style.cursor = 'grab';
+        });
+
+        zoomContainer.addEventListener('mouseleave', () => {
+            isZoomDragging = false;
+            zoomContainer.style.cursor = 'grab';
+        });
+
+        function onClickCloseViewImg() {
+            zoomContainer.style.display = 'none';
+        }
+
+        function onClickViewImg(url) {
+            zoomImg.src = url;
+            zoomContainer.style.display = 'flex';
+        }
+    </script>
+
+    @*// Script 4: Navbar Toggle Functionality*@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const toggleNavbar = (toggleId, navId, bodyId, headerId) => {
+                const toggleElement = document.getElementById(toggleId),
+                    navElement = document.getElementById(navId),
+                    bodyElement = document.getElementById(bodyId),
+                    headerElement = document.getElementById(headerId);
 
                 // Validate that all variables exist
-                if (toggle && nav && bodypd && headerpd) {
-                    toggle.addEventListener('click', () => {
-                        // show navbar
-                        nav.classList.toggle('show')
-                        // change icon
-                        toggle.classList.toggle('bx-x')
-                        // add padding to body
-                        bodypd.classList.toggle('body-pd')
-                        // add padding to header
-                        headerpd.classList.toggle('body-pd')
-                    })
+                if (toggleElement && navElement && bodyElement && headerElement) {
+                    toggleElement.addEventListener('click', () => {
+                        // Show navbar
+                        navElement.classList.toggle('show');
+                        // Change icon
+                        toggleElement.classList.toggle('bx-x');
+                        // Add padding to body
+                        bodyElement.classList.toggle('body-pd');
+                        // Add padding to header
+                        headerElement.classList.toggle('body-pd');
+                    });
                 }
-            }
+            };
 
-            showNavbar('header-toggle', 'nav-bar', 'body-pd', 'header')
+            toggleNavbar('header-toggle', 'nav-bar', 'body-pd', 'header');
 
             /*===== LINK ACTIVE =====*/
-            const linkColor = document.querySelectorAll('.nav_link')
+            const navLinks = document.querySelectorAll('.nav_link');
 
-            function colorLink() {
-                if (linkColor) {
-                    linkColor.forEach(l => l.classList.remove('left-nav-active'))
-                    this.classList.add('left-nav-active')
+            function setActiveLink() {
+                if (navLinks) {
+                    navLinks.forEach(link => link.classList.remove('left-nav-active'));
+                    this.classList.add('left-nav-active');
                 }
             }
-            linkColor.forEach(l => l.addEventListener('click', colorLink))
-
-            // Your code to run since DOM is loaded and ready
+            navLinks.forEach(link => link.addEventListener('click', setActiveLink));
         });
     </script>
 </body>

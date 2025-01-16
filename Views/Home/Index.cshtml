@@ -12,45 +12,6 @@
         cursor: pointer;
     }
 
-    .floating-container-layer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(52, 52, 52, 0.50);
-        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: center;
-        align-items: end;
-        z-index: 1000;
-    }
-
-    .play-media-container {
-        width: 100%;
-        max-width: 1000px;
-        height: 100%;
-        max-height: 800px;
-        background-color: #202427;
-        bottom: 0;
-        border-radius: 10px 10px 0 0;
-        padding: 10px;
-    }
-
-    .play-media-container > video {
-        width: 100%;
-        aspect-ratio: 16/9;
-        cursor: pointer;
-    }
-
-    .conatainer-display-hidden {
-        display: none !important;
-    }
-
-    .conatainer-display-show {
-        display: flex !important;
-    }
-
     .file-display-name {
         white-space: nowrap; /* Ngăn xuống dòng */
         overflow: hidden; /* Ẩn nội dung thừa */
@@ -84,59 +45,18 @@
         background-color: #f9f9f9;
     }
 
-    #contextMenu ul li {
-        padding: 8px 12px;
-    }
+        #contextMenu ul li {
+            padding: 8px 12px;
+        }
 
-    #contextMenu ul li a {
-        text-decoration: none;
-        color: black;
-    }
+            #contextMenu ul li a {
+                text-decoration: none;
+                color: black;
+            }
 
-    #contextMenu ul li:hover {
-        background-color: #e8e8e8;
-    }
-
-    .show-img-thumbnail-container {
-        width: 10rem;
-        aspect-ratio: 1/1;
-        overflow: hidden;
-        cursor: pointer;
-    }
-
-    .show-img-thumbnail {
-    }
-
-    #zoom-image-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        cursor: grab;
-        z-index: 1000;
-    }
-
-    #zoom-image-container button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        width: 30px;
-        aspect-ratio: 1/1;
-    }
-
-    #zoom-image-view {
-        position: absolute;
-        max-width: 100%;
-        max-height: 100%;
-        transform-origin: center center;
-        transition: transform 0.1s ease;
-    }
+            #contextMenu ul li:hover {
+                background-color: #e8e8e8;
+            }
 </style>
 
 <div class="position-relative d-block p-3 rounded" style="background-color: var(--white-gray-color)">
@@ -227,13 +147,6 @@ else
                     </div>
 
                 }
-                else if (source.SourceType.Contains("audio"))
-                {
-                    <audio controls class="rounded">
-                        <source src="/Home/GetFile/@source.SourceId" type="audio/mpeg">
-                        Your browser does not support the audio tag.
-                    </audio>
-                }
                 else
                 {
                     <div class="unsupported-file">
@@ -254,16 +167,7 @@ else
     }
 </div>
 
-<div class="floating-container-layer conatainer-display-hidden" id="view-media-container">
-    <div class="play-media-container">
-        <video controls autoplay class="rounded" id="video-source-element">
-            <source src="" type="video/mp4">
-        </video>
-        <h4 id="view-video-source-name" class="text-white mt-1"></h4>
-    </div>
-</div>
-
-<div class="floating-container-layer justify-content-center align-items-center conatainer-display-hidden" id="create-new-folder-container">
+<div class="floating-container-layer justify-content-center align-items-center container-display-hidden" id="create-new-folder-container">
     <div class="create-new-folder-container rounded border">
         <form action="/Home/CreateFolder" method="post" class="">
             <label for="folder-name" class="col-form-label"><strong>Folder Name</strong></label>
@@ -276,6 +180,29 @@ else
     </div>
 </div>
 
+@*floating add button*@
+<div class="fab-container">
+    <div class="fab shadow">
+        <div class="fab-content">
+            <span class="material-icons">list</span>
+        </div>
+    </div>
+    <div class="sub-button shadow">
+        <button type="button" class="btn btn-primary rounded" onclick="showCreateFolderContainer()">
+            <span class="material-icons">folder</span>
+        </button>
+    </div>
+    <div class="sub-button shadow">
+        @*<button type="button" class="btn btn-primary rounded" data-toggle="modal" data-target="#uploadFileModal">
+                <span class="material-icons">upload</span>
+            </button>*@
+
+        <a href="/Home/UploadFiles" class="btn btn-primary rounded">
+            <span class="material-icons">upload</span>
+        </a>
+    </div>
+</div>
+
 <div id="contextMenu" class="rounded" style="display:none; position:absolute; z-index:1000; background:white; border:1px solid #ccc;">
     <ul style="list-style:none; margin:0; padding:0;">
         <li><a href="#" id="actionOption1" class="d-flex row align-items-center m-1" style="gap: 5px;"><span class="material-icons">delete</span> Delete</a></li>
@@ -283,61 +210,21 @@ else
     </ul>
 </div>
 
-<div id="zoom-image-container">
-    <button class="position-absolute bg-transparent border-0 text-white" style="top: 10px; right: 10px;" onclick="onClickCloseViewImg()"><span class="material-icons">close</span></button>
-    <img src="/Home/GetFile/20" alt="Zoomable Image" id="zoom-image-view">
-</div>
-
+@*// show create folder *@
 <script>
-    const container = document.getElementById('zoom-image-container');
-    const img = document.getElementById('zoom-image-view');
-
-    let scale = 1;
-    let startX = 0, startY = 0;
-    let translateX = 0, translateY = 0;
-    let isDragging = false;
-
-    // Zoom with mouse wheel
-    container.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
-        scale = Math.min(Math.max(scale + delta, 0.5), 5); // Limit zoom between 0.5x and 5x
-        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-    });
-
-    // Drag to move image
-    container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-        container.style.cursor = 'grabbing';
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-    });
-
-    container.addEventListener('mouseup', () => {
-        isDragging = false;
-        container.style.cursor = 'grab';
-    });
-
-    container.addEventListener('mouseleave', () => {
-        isDragging = false;
-        container.style.cursor = 'grab';
-    });
-
-    function onClickCloseViewImg() {
-        container.style.display = 'none';
+    function showCreateFolderContainer() {
+        const folderContainer = document.querySelector("#create-new-folder-container");
+        folderContainer.classList.remove("container-display-hidden");
+        folderContainer.classList.add("container-display-show");
     }
 
-    function onClickViewImg(url) {
-        img.src = url;
-        container.style.display = 'flex';
-    }
+    const folderContainer = document.querySelector("#create-new-folder-container");
+    folderContainer.addEventListener("click", (e) => {
+        if (!e.target.closest(".create-new-folder-container")) {
+            folderContainer.classList.remove("container-display-show");
+            folderContainer.classList.add("container-display-hidden");
+        }
+    });
 </script>
 
 <script>
@@ -393,32 +280,5 @@ else
                     alert("Request failed!");
                 });
         }
-    }
-
-</script>
-
-<script>
-    function onClickOpenViewVideo(url, name) {
-        const videoElement = document.getElementById("video-source-element");
-        if (document.getElementById("auto-play-checkbox").checked) {
-            videoElement.autoplay = true;
-        } else {
-            videoElement.autoplay = false;
-        }
-        videoElement.src = url;
-        videoElement.load();
-        document.querySelector("#view-video-source-name").innerText = name;
-
-        const container = document.querySelector("#view-media-container");
-        container.classList.remove("conatainer-display-hidden");
-        container.classList.add("conatainer-display-show");
-
-        container.addEventListener("click", (e) => {
-            if (!e.target.closest(".play-media-container")) {
-                container.classList.remove("conatainer-display-show");
-                container.classList.add("conatainer-display-hidden");
-                document.getElementById("video-source-element").pause();
-            }
-        });
     }
 </script>

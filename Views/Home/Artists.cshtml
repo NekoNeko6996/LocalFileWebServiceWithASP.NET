@@ -36,10 +36,19 @@
         {
             <a href="/Home/Artist/@artist.ArtistId">
                 <div class="show-user-card card bg-transparent">
-                    <img src="@artist.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded" />
+                    <img src="@artist.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded artist-avatars" />
                     <p class="card-text text-white">@artist.ArtistName</p>
                 </div>
             </a>
         }
     }
 </div>
+
+<script>
+    document.querySelectorAll(".artist-avatars").forEach(img => {
+        img.onerror = () => {
+            img.onerror = null;
+            img.src = `@ViewBag.DefaultArtistAvatarUrls`;
+        }
+    })
+</script>

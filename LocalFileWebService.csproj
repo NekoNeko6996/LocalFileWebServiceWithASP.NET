@@ -249,6 +249,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\css\ArtistPage.css" />
+    <Content Include="Content\css\UploadFilesPage.css" />
+    <Content Include="Content\Resources\Default\Img\_z5862484494155_3d8ec334ae9dfa5829f4e47d070d8dfd.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -256,10 +259,12 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Content\css\_Layout.css" />
-    <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
+    <Content Include="Content\css\LayoutPage.css" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.3.js" />
     <Content Include="Scripts\jquery.signalR-2.4.3.min.js" />
     <Content Include="Web.config" />
@@ -267,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Class\FileManager.cs" />
     <Compile Include="Class\JWT.cs" />
     <Compile Include="Class\Media.cs" />
     <Compile Include="Controllers\AuthController.cs" />
@@ -303,6 +309,7 @@
     <Compile Include="Models\MVCDBContext.cs" />
     <Compile Include="Models\Source.cs" />
     <Compile Include="Models\Tag.cs" />
+    <Compile Include="Models\FormUploadFilesInfo.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -339,6 +346,9 @@
     <Content Include="Views\Auth\SignUp.cshtml" />
     <Content Include="Views\Home\Artists.cshtml" />
     <Content Include="Views\Home\Artist.cshtml" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
+    <Content Include="Views\Home\UploadFiles.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -348,7 +358,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Thumbnail\" />
     <Folder Include="UploadFiles\" />
     <Folder Include="Views\Authenticaton\" />
   </ItemGroup>

@@ -1,0 +1,145 @@
+﻿.show-user-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.show-user-card {
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .show-user-card > img {
+        width: 10rem;
+        aspect-ratio: 1/1;
+    }
+
+    .show-user-card > p {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.link-container {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+    max-width: 100%;
+}
+
+.link-a, .link-p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 600px;
+    width: 100%;
+}
+
+/*    */
+.view-video-btn {
+    cursor: pointer;
+}
+
+.card-container {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 10px;
+}
+
+.floating-container-layer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(52, 52, 52, 0.50);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    z-index: 1000;
+}
+
+.play-media-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 100%;
+    max-height: 800px;
+    background-color: #202427;
+    bottom: 0;
+    border-radius: 10px 10px 0 0;
+    padding: 10px;
+}
+
+    .play-media-container > video {
+        width: 100%;
+        aspect-ratio: 16/9;
+        cursor: pointer;
+    }
+
+.conatainer-display-hidden {
+    display: none !important;
+}
+
+.conatainer-display-show {
+    display: flex !important;
+}
+
+.text-one-line-display {
+    white-space: nowrap; /* Ngăn xuống dòng */
+    overflow: hidden; /* Ẩn nội dung thừa */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
+    margin: 5px 0 5px 0;
+    text-align: left;
+}
+
+.folder-name:active {
+    color: white;
+}
+
+.folder-name:hover {
+    color: white;
+    text-decoration: none !important;
+}
+
+.create-new-folder-container {
+    width: 100%;
+    max-width: 550px;
+    height: 100%;
+    max-height: 190px;
+    background-color: #202427;
+    border-radius: 10px 10px 0 0;
+    padding: 20px;
+    color: white;
+}
+
+#contextMenu ul {
+    padding: 5px;
+    background-color: #f9f9f9;
+}
+
+    #contextMenu ul li {
+        padding: 8px 12px;
+    }
+
+        #contextMenu ul li a {
+            text-decoration: none;
+            color: black;
+        }
+
+        #contextMenu ul li:hover {
+            background-color: #e8e8e8;
+        }
+
+.tab-content .tab-pane {
+    display: none !important;
+}
+
+    .tab-content .tab-pane.active {
+        display: flex !important;
+    }

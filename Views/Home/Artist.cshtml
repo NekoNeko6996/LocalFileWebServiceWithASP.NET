@@ -4,50 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .show-user-container {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .show-user-card {
-        width: 10rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .show-user-card > img {
-        width: 10rem;
-        aspect-ratio: 1/1;
-    }
-
-    .show-user-card > p {
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .link-container {
-        padding-left: 10px;
-        padding-right: 10px;
-        border-left: 1px solid white;
-        color: white;
-        max-width: 100%;
-    }
-
-    .link-a, .link-p {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 600px;
-        width: 100%;
-    }
-</style>
+<head>
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/ArtistPage.css")">
+</head>
 
 @if (ViewBag.status != null && ViewBag.status == "error")
 {
@@ -59,24 +18,111 @@
 
 @if (ViewBag.Artists != null)
 {
-    <div class="d-flex flex-row show-user-container rounded">
+    <div class="d-flex flex-column show-user-container rounded align-items-center">
         <div class="show-user-card card bg-transparent border-0">
-            <img src="@ViewBag.Artists.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded" />
+            <img src="@ViewBag.Artists.ArtisAvatarUrl" alt="avatar" class="card-img-top rounded artist-avatar" />
             <p class="card-text text-white">@ViewBag.Artists.ArtistName</p>
         </div>
-        <div class="link-container">
-            <div class="d-flex flex-row" style="gap: 15px;">
-                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
-                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
+        <div class="link-container d-flex flex-row" style="gap: 10px;">
+            <a href="#">
+                <div class="bg-white p-0 position-relative rounded" style="width:30px;height:30px;">
+                    <svg class="position-absolute" style="top:0;left:0;" fill="#0097FC" width="30px" height="30px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><title>pixiv icon</title><path d="M4.935 0A4.924 4.924 0 0 0 0 4.935v14.13A4.924 4.924 0 0 0 4.935 24h14.13A4.924 4.924 0 0 0 24 19.065V4.935A4.924 4.924 0 0 0 19.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.118 6.118 0 0 1 2.116 4.66c.005 1.854-.88 3.476-2.257 4.563-1.375 1.092-3.225 1.697-5.258 1.697-2.314 0-4.46-.842-4.46-.842v2.718c.397.116 1.048.365.635.779H5.79c-.41-.41.19-.65.644-.779V7.666c-1.053.81-1.593 1.51-1.868 2.031.32 1.02-.284.969-.284.969l-1.09-1.73s3.868-4.39 9.553-4.39zm-.19.971c-1.423-.003-3.184.473-4.27 1.244v8.646c.988.487 2.484.832 4.26.832h.01c1.596 0 2.98-.593 3.93-1.533.952-.948 1.486-2.183 1.492-3.683-.005-1.54-.504-2.864-1.42-3.86-.918-.992-2.274-1.645-4.002-1.646Z" /></svg>
+                </div>
+            </a>
+            <a href="#">
+                <div class="bg-white p-0 position-relative rounded" style="width:30px;height:30px;">
+                    <svg class="position-absolute" style="top:0;left:0;" fill="#0097FC" width="30px" height="30px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><title>pixiv icon</title><path d="M4.935 0A4.924 4.924 0 0 0 0 4.935v14.13A4.924 4.924 0 0 0 4.935 24h14.13A4.924 4.924 0 0 0 24 19.065V4.935A4.924 4.924 0 0 0 19.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.118 6.118 0 0 1 2.116 4.66c.005 1.854-.88 3.476-2.257 4.563-1.375 1.092-3.225 1.697-5.258 1.697-2.314 0-4.46-.842-4.46-.842v2.718c.397.116 1.048.365.635.779H5.79c-.41-.41.19-.65.644-.779V7.666c-1.053.81-1.593 1.51-1.868 2.031.32 1.02-.284.969-.284.969l-1.09-1.73s3.868-4.39 9.553-4.39zm-.19.971c-1.423-.003-3.184.473-4.27 1.244v8.646c.988.487 2.484.832 4.26.832h.01c1.596 0 2.98-.593 3.93-1.533.952-.948 1.486-2.183 1.492-3.683-.005-1.54-.504-2.864-1.42-3.86-.918-.992-2.274-1.645-4.002-1.646Z" /></svg>
+                </div>
+            </a>
+            <a href="#">
+                <div class="bg-white p-0 position-relative rounded" style="width:30px;height:30px;">
+                    <svg class="position-absolute" style="top:0;left:0;" fill="#0097FC" width="30px" height="30px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><title>pixiv icon</title><path d="M4.935 0A4.924 4.924 0 0 0 0 4.935v14.13A4.924 4.924 0 0 0 4.935 24h14.13A4.924 4.924 0 0 0 24 19.065V4.935A4.924 4.924 0 0 0 19.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.118 6.118 0 0 1 2.116 4.66c.005 1.854-.88 3.476-2.257 4.563-1.375 1.092-3.225 1.697-5.258 1.697-2.314 0-4.46-.842-4.46-.842v2.718c.397.116 1.048.365.635.779H5.79c-.41-.41.19-.65.644-.779V7.666c-1.053.81-1.593 1.51-1.868 2.031.32 1.02-.284.969-.284.969l-1.09-1.73s3.868-4.39 9.553-4.39zm-.19.971c-1.423-.003-3.184.473-4.27 1.244v8.646c.988.487 2.484.832 4.26.832h.01c1.596 0 2.98-.593 3.93-1.533.952-.948 1.486-2.183 1.492-3.683-.005-1.54-.504-2.864-1.42-3.86-.918-.992-2.274-1.645-4.002-1.646Z" /></svg>
+                </div>
+            </a>
+            <a href="#">
+                <div class="bg-white p-0 position-relative rounded" style="width:30px;height:30px;">
+                    <svg class="position-absolute" style="top:0;left:0;" fill="#0097FC" width="30px" height="30px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><title>pixiv icon</title><path d="M4.935 0A4.924 4.924 0 0 0 0 4.935v14.13A4.924 4.924 0 0 0 4.935 24h14.13A4.924 4.924 0 0 0 24 19.065V4.935A4.924 4.924 0 0 0 19.065 0zm7.81 4.547c2.181 0 4.058.676 5.399 1.847a6.118 6.118 0 0 1 2.116 4.66c.005 1.854-.88 3.476-2.257 4.563-1.375 1.092-3.225 1.697-5.258 1.697-2.314 0-4.46-.842-4.46-.842v2.718c.397.116 1.048.365.635.779H5.79c-.41-.41.19-.65.644-.779V7.666c-1.053.81-1.593 1.51-1.868 2.031.32 1.02-.284.969-.284.969l-1.09-1.73s3.868-4.39 9.553-4.39zm-.19.971c-1.423-.003-3.184.473-4.27 1.244v8.646c.988.487 2.484.832 4.26.832h.01c1.596 0 2.98-.593 3.93-1.533.952-.948 1.486-2.183 1.492-3.683-.005-1.54-.504-2.864-1.42-3.86-.918-.992-2.274-1.645-4.002-1.646Z" /></svg>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div>
+        <ul class="nav nav-tabs d-flex flex-row justify-content-start" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="latest-tab" data-bs-toggle="tab" data-bs-target="#latest" type="button" role="tab" aria-controls="latest" aria-selected="true">Latest</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab" aria-controls="files" aria-selected="false">Files</button>
+            </li>
+        </ul>
+
+        @* auto play video *@
+        <input type="checkbox" name="auto-play-checkbox" id="auto-play-checkbox" checked hidden>
+
+        @* show tab content *@
+        <div class="tab-content text-white" id="myTabContent">
+            <!-- show files latest in internet -->
+            <div class="tab-pane show active fade d-flex flex-row flex-wrap w-100 card-container" id="latest" role="tabpanel" aria-labelledby="latest-tab">
+                <div class="card bg-transparent rounded overflow-hidden border-0 position-relative" style="width: 10rem;">
+                    <img src="/Home/GetFile/13" alt="Alternate Text" class="show-img-thumbnail"/>
+                    <p class="text-white position-absolute m-0" style="top: 5px; left: 5px; width: calc(100% - 10px)">asdas asdalsd asdajls</p>
+                </div>
             </div>
-            <div class="d-flex flex-row" style="gap: 15px;">
-                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
-                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
-            </div>
-            <div class="d-flex flex-row" style="gap: 15px;">
-                <p class=""><i class='bx bx-link nav_icon'></i> Pixiv:</p>
-                <a href="#" target="_blank" class="link-a"><p class="link-p">https://example.com/users/ssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p></a>
+
+            <!-- show files downloaded -->
+            <div class="tab-pane fade d-flex flex-row flex-wrap w-100 card-container" id="files" role="tabpanel" aria-labelledby="files-tab">
+                @if (ViewBag.Sources != null && ViewBag.Sources.Count > 0)
+                {
+                    foreach (var source in ViewBag.Sources)
+                    {
+
+                        <div class="card bg-dark border-0 context-menu-target" data-item-id="source-@source.SourceName-@source.SourceId">
+                            @if (source.SourceType.Contains("image"))
+                            {
+                                <button class="show-img-thumbnail-container rounded border-0 p-0" onclick="onClickViewImg('/Home/GetFile/@(source.SourceId)')">
+                                    <img src="/Home/GetFile/@source.SourceId" class="card-img-top show-img-thumbnail" alt="...">
+                                </button>
+                            }
+                            else if (source.SourceType.Contains("video"))
+                            {
+                                <button class="mb-0 p-0 border-0 rounded view-video-btn" style="background-color: #343a40; width: 18rem;" onclick="onClickOpenViewVideo('/Home/GetFile/@source.SourceId', '@source.SourceName')">
+                                    <img src="/Home/GetVideoFileThumbnail/@source.SourceId" class="rounded card-img-top" alt="thumb">
+                                    <p class="text-white bg-dark m-0 position-absolute" style="font-size:.8rem; padding: 0 5px 0 5px; top: 5px; right: 5px;">@TimeSpan.FromSeconds(source.SourceLength).ToString(@"hh\:mm\:ss")</p>
+                                </button>
+                                <div class="d-flex flex-row align-items-center justify-content-between">
+                                    <p href="/Home/GetFile/@source.SourceId" class="text-one-line-display text-white flex-grow-1" style="font-size: .8rem; text-decoration: none;">@source.SourceName</p>
+
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="unsupported-file">
+                                    <svg ...></svg>
+                                    <p class="text-muted">Unsupported file type</p>
+                                </div>
+                            }
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div class="d-flex align-items-center flex-column" style="width: 100%">
+                        <img src="~/Content/Image/empty-folder.png" alt="Folder Empty" style="width:13rem; aspect-ratio:1/1;" />
+                        <h6 class="text-muted">Folder Is Empty ...</h6>
+                    </div>
+                }
             </div>
         </div>
     </div>
 }
+
+<script>
+    const artistAvatar = document.querySelector(".artist-avatar");
+    artistAvatar.onerror = () => {
+        artistAvatar.onerror = null;
+        artistAvatar.src = `@ViewBag.DefaultArtistAvatarUrls`;
+    }
+</script>

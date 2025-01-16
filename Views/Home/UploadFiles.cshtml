@@ -1,0 +1,274 @@
+﻿
+@{
+    ViewBag.Title = "UploadFiles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link href="@Url.Content("~/Content/css/UploadFilesPage.css")" rel="stylesheet" />
+</head>
+
+<h2>UploadFiles</h2>
+<div class="container">
+    <div id="dropZone" style="border: 2px dashed #007bff; padding: 60px 10px 60px 10px; text-align: center; cursor: pointer;">
+        <p class="m-0 text-white">Drag Files Here or Click To Select Files</p>
+        <input type="file" id="fileInput" multiple style="display: none;" />
+    </div>
+    <br />
+</div>
+<br />
+
+<div class="container file-info-container d-flex flex-row flex-wrap" style="gap: 20px">
+    <form id="fileForm" class="form-container">
+        <div id="fileList" class="p-5 rounded" style="border: 1px ridge var(--white-gray-color)">
+            <div class="form-group">
+                <label for="fileName" class="text-white">File Name</label>
+                <input type="text" name="fileName" class="form-control input-form-b-b input-form-bg-transparent border-radius-0 border-color-w transparent-input-forcus text-white" placeholder="">
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="fileDescription" class="text-white">File Description</label>
+                <input type="text" name="fileDescription" class="form-control input-form-b-b input-form-bg-transparent border-radius-0 border-color-w transparent-input-forcus text-white" placeholder="">
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="artist" class="text-white">Artist</label><br />
+                <select name="artist" class="form-select select-transparent text-white" required>
+                    @if (ViewBag.Artists != null && ViewBag.Artists.Count > 0)
+                    {
+                        foreach (LocalFileWebService.Models.Artist artist in ViewBag.Artists)
+                        {
+                            <option value="@artist.ArtistId" class="text-white">@artist.ArtistName</option>
+                        }
+                    }
+                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option>
+                </select>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="tags" class="text-white">Tag (multiple)</label>
+                @if (ViewBag.Tags != null && ViewBag.Tags.Count > 0)
+                {
+                    <select multiple name="tags" class="form-select select-transparent custom-scroll">
+                        @foreach (LocalFileWebService.Models.Tag tag in ViewBag.Tags)
+                        {
+                            <option value="@tag.TagId" class="text-white">@tag.TagName</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <select multiple name="tags" class="disabled form-select select-transparent custom-scroll" disabled>
+                        <option value="" class="text-dark">No Tag Found</option>
+                    </select>
+                }
+            </div>
+            <br />
+            <input type="submit" id="submitForm" class="btn btn-primary" value="Save Info This File" />
+        </div>
+    </form>
+    <div class="view-list-files-container text-white container p-0">
+        <ul class="m-0 custom-ul p-0" id="file-list-ul">
+        </ul>
+    </div>
+</div>
+
+<div class="container pt-3">
+    <button id="uploadButton" class="btn btn-primary w-100" data-toggle="modal" data-target="#uploadFileModal">Upload</button>
+</div>
+
+
+@helper RenderFolderTree(List<LocalFileWebService.Models.Folder> folders, LocalFileWebService.Models.Folder folder, int level = 0)
+{
+    List<LocalFileWebService.Models.Folder> childFolders = folders
+    .Where(f => f.FolderParentId == folder.FolderId)
+    .ToList();
+
+    if (childFolders.Any())
+    {
+        <ul class="text-white" style="margin-left: @(level * 5)px;">
+            @if (level > 0)
+            {
+                <!-- Thêm thụt lề -->
+                foreach (LocalFileWebService.Models.Folder child in childFolders)
+                {
+                    <li style="border-left: 1px solid white">
+                        <p>@child.FolderName</p> <!-- Hiển thị tên thư mục hiện tại -->
+                        @RenderFolderTree(folders, child, level + 1) <!-- Gọi đệ quy -->
+                    </li>
+                }
+            }
+            else
+            {
+                <li style="border-left: 1px solid white">
+                    <p>@folder.FolderName</p> <!-- Hiển thị tên thư mục hiện tại -->
+                    @RenderFolderTree(folders, folder, level + 1) <!-- Gọi đệ quy -->
+                </li>
+            }
+        </ul>
+    }
+}
+
+<div class="container">
+    @if (ViewBag.Folders != null)
+    {
+        @RenderFolderTree(ViewBag.Folders, ViewBag.RootFolder, 0)
+    }
+</div>
+
+<script>
+    const fileDropZone = document.getElementById('dropZone');
+    const fileInputElement = document.getElementById('fileInput');
+    const fileUploadList = document.getElementById('file-list-ul');
+
+    // Danh sách tệp và thông tin tệp
+    let uploadedFiles = [];
+    let uploadedFilesInfo = [];
+    let currentFileIndex = 0;
+
+    // Khu vực Drop Zone
+    fileDropZone.addEventListener('click', () => fileInputElement.click());
+
+    fileDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileDropZone.style.borderColor = "#00b300";
+    });
+
+    fileDropZone.addEventListener('dragleave', () => {
+        fileDropZone.style.borderColor = "#007bff";
+    });
+
+    fileDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileDropZone.style.borderColor = "#007bff";
+
+        const files = Array.from(e.dataTransfer.files);
+        handleUploadedFiles(files);
+    });
+
+    fileInputElement.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        handleUploadedFiles(files);
+    });
+
+    // Xử lý tệp được tải lên
+    function handleUploadedFiles(files) {
+        files.forEach((file) => {
+            if (uploadedFiles.some(f => f.name === file.name)) {
+                alert(`File ${file.name} đã được thêm.`);
+                return;
+            }
+
+            // Thêm tệp vào danh sách
+            uploadedFiles.push(file);
+
+            // Thêm thông tin tệp mặc định
+            uploadedFilesInfo.push({
+                fileName: file.name,
+                fileDescription: "",
+                artist: @ViewBag.DefaultArtist,
+                tags: []
+            });
+        });
+
+        renderFileList();
+    }
+
+    // Hiển thị danh sách tệp
+    function renderFileList() {
+        fileUploadList.innerHTML = uploadedFiles.map((file, idx) => `
+        <li onclick="ediFileInfo(${idx})">
+            <p class="one-line-text p-0 m-0">${file.name}</p>
+            <span class="material-icons" onclick="removeFile(${idx}, event)">delete</span>
+        </li>
+    `).join('');
+
+        if (uploadedFiles.length > 0) {
+            ediFileInfo(0);
+        }
+    }
+
+    // Chỉnh sửa thông tin tệp
+    function ediFileInfo(idx) {
+        const file = uploadedFilesInfo[idx];
+        const form = document.getElementById("fileForm");
+
+        form.elements["fileName"].value = file.fileName;
+        form.elements["fileDescription"].value = file.fileDescription;
+        form.elements["artist"].value = file.artist;
+        form.elements["tags"].value = file.tags;
+
+        currentFileIndex = idx;
+    }
+
+    // Cập nhật thông tin tệp khi chỉnh sửa
+    document.getElementById("fileForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const form = document.getElementById("fileForm");
+        uploadedFilesInfo[currentFileIndex] = {
+            fileName: form.elements["fileName"].value,
+            fileDescription: form.elements["fileDescription"].value,
+            artist: form.elements["artist"].value,
+            tags: Array.from(form.elements["tags"].selectedOptions).map(option => option.value)
+        };
+
+        console.log(uploadedFilesInfo);
+    });
+
+    // Xóa tệp khỏi danh sách
+    function removeFile(idx, event) {
+        event.stopPropagation();
+        uploadedFiles.splice(idx, 1);
+        uploadedFilesInfo.splice(idx, 1);
+        renderFileList();
+    }
+
+    // Upload tệp và thông tin lên server
+    document.getElementById('uploadButton').addEventListener('click', () => {
+        const formData = new FormData();
+
+        // Thêm danh sách tệp
+        uploadedFiles.forEach((file, idx) => {
+            formData.append('files', file);
+        });
+
+        // Thêm thông tin tệp
+        formData.append('filesInfo', JSON.stringify(uploadedFilesInfo));
+
+        // Thêm đường dẫn
+        formData.append("path", "");
+
+        console.log(formData);
+
+        fetch('/Home/_UploadFiles', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                console.log('Full Response:', response);
+                return response.text(); // Parse as text to inspect the raw response
+            })
+            .then(data => {
+                try {
+                    const jsonData = JSON.parse(data); // Attempt to parse as JSON
+                    console.log('Parsed JSON:', jsonData);
+
+                    if (jsonData.success) {
+                        alert('Upload thành công!');
+                        window.location.reload();
+                    } else {
+                        alert('Upload thất bại! Vui lòng thử lại.');
+                    }
+                } catch (error) {
+                    console.error('Failed to parse JSON. Response was:', data);
+                    document.getElementById('error').innerText = data;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Upload thất bại! Vui lòng thử lại.');
+            });
+
+    });
+</script>
