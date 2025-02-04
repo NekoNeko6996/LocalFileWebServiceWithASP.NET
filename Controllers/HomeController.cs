@@ -48,7 +48,7 @@ namespace LocalFileWebService.Controllers
 
             string userEmail = ticket.Name;
 
-            // query 
+            // query
             MVCDBContext db = new MVCDBContext();
             var folderQuery = db.Folders
                 .Where(folder => folder.User.UserEmail.Equals(userEmail) && folder_paths.Contains(folder.FolderName))
@@ -318,18 +318,17 @@ namespace LocalFileWebService.Controllers
                 list_path_folder.AddRange(folderPath.Split('/'));
             }
 
-            // find folder in db
-            var folders = db.Folders
-                            .Where(f => f.User.UserEmail.Equals(userEmail) && list_path_folder.Contains(f.FolderName))
-                            .ToList();
 
-            if (folders.Count != list_path_folder.Count)
+            // check and get parent folder id
+            int folderParentId = FolderPath.CheckFolderExists(list_path_folder, user.UserId, db);
+
+            if (folderParentId == -1)
             {
-                return Json(new { success = false, message = "One or more folders in the path are missing." });
+                TempData["ErrorMessage"] = "Can't create new folder, One or more folders in the path are missing.";
+                return Redirect(Request.UrlReferrer.ToString());
             }
 
-            int folderParentId = folders.Last().FolderId;
-
+            // create new folder
             Folder folder = new Folder
             {
                 UserId = user.UserId,
@@ -341,7 +340,8 @@ namespace LocalFileWebService.Controllers
             db.Folders.Add(folder);
             db.SaveChanges();
 
-            return Json(new { success = true, message = $"create new folder [{folderName}] successfully" });
+            TempData["SuccessMessage"]= $"Create new folder [{folderName}] successfully.";
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         [HttpDelete]

@@ -273,6 +273,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Class\FileManager.cs" />
+    <Compile Include="Class\FolderPath.cs" />
     <Compile Include="Class\JWT.cs" />
     <Compile Include="Class\Media.cs" />
     <Compile Include="Controllers\AuthController.cs" />

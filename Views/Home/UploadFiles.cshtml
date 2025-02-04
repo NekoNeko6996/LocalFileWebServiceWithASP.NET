@@ -41,7 +41,7 @@
                             <option value="@artist.ArtistId" class="text-white">@artist.ArtistName</option>
                         }
                     }
-                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option>
+                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option> 
                 </select>
             </div>
             <br />
@@ -86,7 +86,7 @@
 
     if (childFolders.Any())
     {
-        <ul class="text-white" style="margin-left: @(level * 5)px;">
+        <ul class="text-white" style="margin-left: @(String.Concat((level * 5).ToString(), "px"));">
             @if (level > 0)
             {
                 <!-- Thêm thụt lề -->

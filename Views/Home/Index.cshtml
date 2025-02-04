@@ -86,6 +86,18 @@
     </h6>
 </div>
 
+@if (TempData["ErrorMessage"] != null && TempData["SuccessMessage"] == null)
+{
+    <br />
+    <div class="alert alert-danger alert-dismissible fade show m-0 w-100" role="alert">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null && TempData["ErrorMessage"] == null)
+{
+    <br />
+    <div class="alert alert-success alert-dismissible fade show m-0 w-100" role="alert">@TempData["SuccessMessage"]</div>
+})
+
 @if (folders.Count > 0)
 {
     <h4 class="title text-white mt-2">Folders</h4>
