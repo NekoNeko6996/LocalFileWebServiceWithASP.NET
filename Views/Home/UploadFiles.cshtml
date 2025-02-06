@@ -6,9 +6,96 @@
 
 <head>
     <link href="@Url.Content("~/Content/css/UploadFilesPage.css")" rel="stylesheet" />
+    <style>
+        .path-floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .path-floating-container-show {
+            display: flex;
+        }
+
+        .path-floating-container-hide {
+            display: none;
+        }
+
+        .bottom-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .floating-body {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 600px;
+            max-width: 500px;
+            display: flex;
+            background-color: #343a40;
+            flex-direction: column;
+            padding: 20px;
+            color: white;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .folder-ele > .folder-name-ele {
+            border: 1px solid #343a40;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 5px;
+            gap: 10px;
+            border-radius: 5px;
+            background-color: transparent;
+            color: white;
+        }
+
+            .folder-ele > .folder-name-ele:hover {
+                border: 1px solid white;
+            }
+
+        .folder-ele {
+            margin: 10px;
+        }
+
+        .floating-body-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <h2>UploadFiles</h2>
+
+<div class="container text-white mb-3 d-flex justify-content-between">
+    <span id="show-upload-folder-path">Please Select Upload Path...</span>
+    <button onclick="showPathFloatingContainer()" class="bg-primary btn text-white">Select Folder</button>
+</div>
+
 <div class="container">
     <div id="dropZone" style="border: 2px dashed #007bff; padding: 60px 10px 60px 10px; text-align: center; cursor: pointer;">
         <p class="m-0 text-white">Drag Files Here or Click To Select Files</p>
@@ -41,7 +128,7 @@
                             <option value="@artist.ArtistId" class="text-white">@artist.ArtistName</option>
                         }
                     }
-                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option> 
+                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option>
                 </select>
             </div>
             <br />
@@ -77,8 +164,7 @@
     <button id="uploadButton" class="btn btn-primary w-100" data-toggle="modal" data-target="#uploadFileModal">Upload</button>
 </div>
 
-
-@helper RenderFolderTree(List<LocalFileWebService.Models.Folder> folders, LocalFileWebService.Models.Folder folder, int level = 0)
+@helper RenderFolderTree(List<LocalFileWebService.Models.Folder> folders, LocalFileWebService.Models.Folder folder, string prevFolder, int level = 0)
 {
     List<LocalFileWebService.Models.Folder> childFolders = folders
     .Where(f => f.FolderParentId == folder.FolderId)
@@ -87,35 +173,78 @@
     if (childFolders.Any())
     {
         <ul class="text-white" style="margin-left: @(String.Concat((level * 5).ToString(), "px"));">
+            @{ string uploadSelectedPath = ""; }
             @if (level > 0)
             {
+                uploadSelectedPath += $"{prevFolder}";
                 <!-- Thêm thụt lề -->
                 foreach (LocalFileWebService.Models.Folder child in childFolders)
                 {
-                    <li style="border-left: 1px solid white">
-                        <p>@child.FolderName</p> <!-- Hiển thị tên thư mục hiện tại -->
-                        @RenderFolderTree(folders, child, level + 1) <!-- Gọi đệ quy -->
+                    <li class="folder-ele">
+                        <button class="folder-name-ele" onclick="onClickSelectFolder('@($"{uploadSelectedPath}/{child.FolderName}")')">
+                            <i class='bx bx-folder nav_icon'></i>
+                            @child.FolderName
+                        </button> <!-- Hiển thị tên thư mục hiện tại -->
+                        @RenderFolderTree(folders, child, $"{uploadSelectedPath}/{child.FolderName}", level + 1) <!-- Gọi đệ quy -->
                     </li>
                 }
             }
             else
             {
-                <li style="border-left: 1px solid white">
-                    <p>@folder.FolderName</p> <!-- Hiển thị tên thư mục hiện tại -->
-                    @RenderFolderTree(folders, folder, level + 1) <!-- Gọi đệ quy -->
+                uploadSelectedPath = $"{prevFolder}";
+                <li class="folder-ele">
+                    <button class="folder-name-ele" onclick="onClickSelectFolder('@($"{uploadSelectedPath}/{folder.FolderName}")')">
+                        <i class='bx bx-folder nav_icon'></i>
+                        @folder.FolderName
+                    </button> <!-- Hiển thị tên thư mục hiện tại -->
+                    @RenderFolderTree(folders, folder, $"{uploadSelectedPath}/{folder.FolderName}", level + 1) <!-- Gọi đệ quy -->
                 </li>
             }
         </ul>
     }
 }
 
-<div class="container">
-    @if (ViewBag.Folders != null)
-    {
-        @RenderFolderTree(ViewBag.Folders, ViewBag.RootFolder, 0)
-    }
+<div class="path-floating-container path-floating-container-hide" id="path-floating-container">
+    <div class="bottom-layer"></div>
+    <div class="floating-body">
+        <div class="floating-body-title">
+            <h5 class="card-title">Select Folder</h5>
+            <button class="close-button" onclick="hidePathFloatingContainer()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                </svg>
+            </button>
+        </div>
+        <hr />
+        @if (ViewBag.Folders != null)
+        {
+            @RenderFolderTree(ViewBag.Folders, ViewBag.RootFolder, "", 0)
+        }
+    </div>
 </div>
 
+
+@* select folder scriot *@
+<script>
+    function showPathFloatingContainer() {
+        document.getElementById("path-floating-container").classList.remove("path-floating-container-hide");
+        document.getElementById("path-floating-container").classList.add("path-floating-container-show");
+    }
+
+    function hidePathFloatingContainer() {
+        document.getElementById("path-floating-container").classList.remove("path-floating-container-show");
+        document.getElementById("path-floating-container").classList.add("path-floating-container-hide");
+    }
+
+    document.querySelector(".bottom-layer").addEventListener("click", () => hidePathFloatingContainer());
+
+    function onClickSelectFolder(path) {
+        document.getElementById("show-upload-folder-path").innerText = path;
+        hidePathFloatingContainer();
+    }
+</script>
+
+@* upload file script *@
 <script>
     const fileDropZone = document.getElementById('dropZone');
     const fileInputElement = document.getElementById('fileInput');
@@ -237,9 +366,15 @@
         formData.append('filesInfo', JSON.stringify(uploadedFilesInfo));
 
         // Thêm đường dẫn
-        formData.append("path", "");
+        let path = document.getElementById('show-upload-folder-path').innerText;
+        if (path === "Please Select Upload Path...") {
+            alert('Vui lòng chọn đường dẫn upload!');
+            return;
+        }
+        path = path.substring(6);
+        formData.append("path", path);
 
-        console.log(formData);
+        //console.log(formData);
 
         fetch('/Home/_UploadFiles', {
             method: 'POST',

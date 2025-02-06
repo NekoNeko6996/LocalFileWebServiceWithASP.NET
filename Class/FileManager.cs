@@ -47,7 +47,7 @@ namespace LocalFileWebService.Class
         public SaveResult save()
         {
             // map đường đẫn để lưu
-            List<string> folder_paths = new List<string> { "root" };
+            List<string> folder_paths = new List<string>();
 
             if (!string.IsNullOrEmpty(_path))
             {
