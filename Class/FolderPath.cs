@@ -30,5 +30,29 @@ namespace LocalFileWebService.Class
             return currentParentId;
         }
 
+        public static bool CreateRootFolder(int userId, MVCDBContext context)
+        {
+            try
+            {
+                Folder rootFolder = new Folder
+                {
+                    UserId = userId,
+                    FolderCreateAt = DateTime.Now,
+                    FolderIconUrl = null,
+                    FolderName = "root",
+                    FolderParentId = -1,
+
+                };
+
+                context.Folders.Add(rootFolder);
+                context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

@@ -132,7 +132,7 @@ namespace LocalFileWebService.Controllers
             ViewBag.RootFolderId = folder.FolderId;
             ViewBag.RootFolder = folder;
             ViewBag.Folders = folders;
-            ViewBag.DefaultArtist = 6;
+            ViewBag.DefaultArtist = "6";
             
 
             ViewBag.Tags = tags;

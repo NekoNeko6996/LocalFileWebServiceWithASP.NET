@@ -3,97 +3,13 @@
     ViewBag.Title = "UploadFiles";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<head>
-    <link href="@Url.Content("~/Content/css/UploadFilesPage.css")" rel="stylesheet" />
-    <style>
-        .path-floating-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .path-floating-container-show {
-            display: flex;
-        }
-
-        .path-floating-container-hide {
-            display: none;
-        }
-
-        .bottom-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .floating-body {
-            position: relative;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            max-height: 600px;
-            max-width: 500px;
-            display: flex;
-            background-color: #343a40;
-            flex-direction: column;
-            padding: 20px;
-            color: white;
-            border-radius: 10px;
-            margin: 10px;
-        }
-
-        .folder-ele > .folder-name-ele {
-            border: 1px solid #343a40;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 5px;
-            gap: 10px;
-            border-radius: 5px;
-            background-color: transparent;
-            color: white;
-        }
-
-            .folder-ele > .folder-name-ele:hover {
-                border: 1px solid white;
-            }
-
-        .folder-ele {
-            margin: 10px;
-        }
-
-        .floating-body-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .close-button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
-</head>
+<link href="@Url.Content("~/Content/css/UploadFilesPage.css")" rel="stylesheet" />
 
 <h2>UploadFiles</h2>
 
 <div class="container text-white mb-3 d-flex justify-content-between">
     <span id="show-upload-folder-path">Please Select Upload Path...</span>
-    <button onclick="showPathFloatingContainer()" class="bg-primary btn text-white">Select Folder</button>
+    <button onclick="showFloatingContainer('path-floating-container')" class="bg-primary btn text-white">Select Folder</button>
 </div>
 
 <div class="container">
@@ -119,44 +35,32 @@
             </div>
             <br />
             <div class="form-group">
-                <label for="artist" class="text-white">Artist</label><br />
-                <select name="artist" class="form-select select-transparent text-white" required>
+                <label for="artist" class="text-white">Artist <small class="">(Please select "Default" for unknown artist)</small></label><br />
+
+                <input type="text" name="artist" value="Default" required class="form-control input-form-b-b input-form-bg-transparent border-radius-0 border-color-w transparent-input-forcus text-white" list="list-artists" id="find-artist">
+                <datalist id="list-artists">
                     @if (ViewBag.Artists != null && ViewBag.Artists.Count > 0)
                     {
                         foreach (LocalFileWebService.Models.Artist artist in ViewBag.Artists)
                         {
-                            <option value="@artist.ArtistId" class="text-white">@artist.ArtistName</option>
+                            <option>@artist.ArtistName</option>
                         }
                     }
-                    <option value="@ViewBag.DefaultArtist" class="text-white" selected>Default</option>
-                </select>
+                    <option>Default</option>
+                </datalist>
             </div>
             <br />
             <div class="form-group">
                 <label for="tags" class="text-white">Tag (multiple)</label>
-                @if (ViewBag.Tags != null && ViewBag.Tags.Count > 0)
-                {
-                    <select multiple name="tags" class="form-select select-transparent custom-scroll">
-                        @foreach (LocalFileWebService.Models.Tag tag in ViewBag.Tags)
-                        {
-                            <option value="@tag.TagId" class="text-white">@tag.TagName</option>
-                        }
-                    </select>
-                }
-                else
-                {
-                    <select multiple name="tags" class="disabled form-select select-transparent custom-scroll" disabled>
-                        <option value="" class="text-dark">No Tag Found</option>
-                    </select>
-                }
+                <div class="tag-container" id="choosed-tag"></div>
+                <button type="button" class="bg-primary btn text-white mt-2" onclick="showFloatingContainer('tag-select-floating-container')">+ Add Tag</button>
             </div>
             <br />
             <input type="submit" id="submitForm" class="btn btn-primary" value="Save Info This File" />
         </div>
     </form>
     <div class="view-list-files-container text-white container p-0">
-        <ul class="m-0 custom-ul p-0" id="file-list-ul">
-        </ul>
+        <ul class="m-0 custom-ul p-0" id="file-list-ul"></ul>
     </div>
 </div>
 
@@ -209,10 +113,8 @@
     <div class="floating-body">
         <div class="floating-body-title">
             <h5 class="card-title">Select Folder</h5>
-            <button class="close-button" onclick="hidePathFloatingContainer()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-x" viewBox="0 0 16 16">
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                </svg>
+            <button class="close-button" onclick="hideFloatingContainer('path-floating-container')">
+                <i class='bx bx-x nav_icon' onclick="closeTag('${tagName}')"></i>
             </button>
         </div>
         <hr />
@@ -223,25 +125,53 @@
     </div>
 </div>
 
+<div class="path-floating-container path-floating-container-hide" id="tag-select-floating-container">
+    <div class="bottom-layer"></div>
+    <div class="floating-body">
+        <div class="floating-body-title">
+            <h5 class="card-title">Select Tag</h5>
+            <button class="close-button" onclick="hideFloatingContainer('tag-select-floating-container')">
+                <i class='bx bx-x nav_icon' onclick="closeTag('${tagName}')"></i>
+            </button>
+        </div>
+        <hr />
+        <div class="tag-container">
+            <button onclick="addTag('video')">video</button>
+            <button onclick="addTag('music')">Music</button>
+            <button onclick="addTag('image')">Image</button>
+            <button onclick="addTag('document')">Document</button>
+        </div>
+    </div>
+</div>
 
-@* select folder scriot *@
+
+@* select folder script *@
 <script>
-    function showPathFloatingContainer() {
-        document.getElementById("path-floating-container").classList.remove("path-floating-container-hide");
-        document.getElementById("path-floating-container").classList.add("path-floating-container-show");
+    function showFloatingContainer(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove("path-floating-container-hide");
+            modal.classList.add("path-floating-container-show");
+        }
     }
 
-    function hidePathFloatingContainer() {
-        document.getElementById("path-floating-container").classList.remove("path-floating-container-show");
-        document.getElementById("path-floating-container").classList.add("path-floating-container-hide");
+    function hideFloatingContainer(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove("path-floating-container-show");
+            modal.classList.add("path-floating-container-hide");
+        }
     }
 
-    document.querySelector(".bottom-layer").addEventListener("click", () => hidePathFloatingContainer());
-
-    function onClickSelectFolder(path) {
-        document.getElementById("show-upload-folder-path").innerText = path;
-        hidePathFloatingContainer();
-    }
+    // Tự động thêm sự kiện click để đóng modal khi nhấn vào `.bottom-layer`
+    document.querySelectorAll(".bottom-layer").forEach(layer => {
+        layer.addEventListener("click", function () {
+            const modal = this.closest(".path-floating-container");
+            if (modal) {
+                hideFloatingContainer(modal.id);
+            }
+        });
+    });
 </script>
 
 @* upload file script *@
@@ -307,7 +237,7 @@
     function renderFileList() {
         fileUploadList.innerHTML = uploadedFiles.map((file, idx) => `
         <li onclick="ediFileInfo(${idx})">
-            <p class="one-line-text p-0 m-0">${file.name}</p>
+            <p class="one-line-text p-0 m-0 show-file-name">${file.name}</p>
             <span class="material-icons" onclick="removeFile(${idx}, event)">delete</span>
         </li>
     `).join('');
@@ -325,23 +255,64 @@
         form.elements["fileName"].value = file.fileName;
         form.elements["fileDescription"].value = file.fileDescription;
         form.elements["artist"].value = file.artist;
-        form.elements["tags"].value = file.tags;
+
+        document.getElementById("choosed-tag").innerHTML = "";
+        file["tags"].forEach(tag => {
+            addTag(tag);
+        });
 
         currentFileIndex = idx;
+    }
+
+    // Chọn tag
+    function addTag(tagName) {
+        let valid = true;
+        document.getElementById("choosed-tag").childNodes.forEach(tag => {
+            if (tag.tagName === "DIV") {
+                if (tag.firstChild.innerText === tagName) {
+                    alert("Tag đã được chọn!");
+                    valid = false;
+                }
+            }
+        });
+
+        if (!valid) {
+            return;
+        }
+        document.getElementById("choosed-tag").innerHTML += `<div><span>${tagName}</span> | <i class='bx bx-x nav_icon' onclick="closeTag('${tagName}')"></i></div>`;
+    }
+
+    // Đóng tag
+    function closeTag(tagName) {
+        document.getElementById("choosed-tag").childNodes.forEach(tag => {
+            if (tag.tagName === "DIV") {
+                if (tag.firstChild.innerText === tagName) {
+                    tag.remove();
+                }
+            }
+        });
     }
 
     // Cập nhật thông tin tệp khi chỉnh sửa
     document.getElementById("fileForm").addEventListener("submit", (e) => {
         e.preventDefault();
 
+        const listTags = [];
+        document.getElementById("choosed-tag").childNodes.forEach(tag => {
+            if (tag.tagName === "DIV") {
+                listTags.push(tag.firstChild.innerText);
+            }
+        });
+
         const form = document.getElementById("fileForm");
         uploadedFilesInfo[currentFileIndex] = {
             fileName: form.elements["fileName"].value,
             fileDescription: form.elements["fileDescription"].value,
             artist: form.elements["artist"].value,
-            tags: Array.from(form.elements["tags"].selectedOptions).map(option => option.value)
+            tags: listTags
         };
 
+        document.querySelectorAll(".show-file-name").item(currentFileIndex).innerText = form.elements["fileName"].value;
         console.log(uploadedFilesInfo);
     });
 

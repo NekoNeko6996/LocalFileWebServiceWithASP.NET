@@ -1,4 +1,5 @@
-﻿@model LocalFileWebService.Models.FormDataUser
+﻿@model LocalFileWebService.Models.AuthFormData
+
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
@@ -6,16 +7,18 @@
 <div class="main bg-dark border">
     <h1>Login</h1>
 
-    <form action="/Auth/Login" method="post">
-        <label for="first">
+    <form action="/Auth/Login" method="post" id="login-form">
+        <label for="email">
             Email:
         </label>
-        <input type="text" id="first" name="UserEmail" placeholder="Enter your Username" class="bg-dark" required autofocus>
+        <input type="text" id="email" name="UserEmail" placeholder="Enter your Username" class="bg-dark" required autofocus>
+        <p>@Html.ValidationMessageFor(f => f.UserEmail, "", new { @class = "text-danger" })</p>
 
         <label for="password">
             Password:
         </label>
         <input type="password" id="password" name="Password" placeholder="Enter your Password" class="bg-dark" required>
+        <p>@Html.ValidationMessageFor(f => f.Password, "", new { @class = "text-danger" })</p>
 
         <div class="wrap">
             <button type="submit">
@@ -26,7 +29,7 @@
 
     <p class="text-white">
         Not registered?
-        <a href="#" style="text-decoration: none;">
+        <a href="/Auth/SignUp" style="text-decoration: none;">
             Create an account
         </a>
     </p>
@@ -34,3 +37,14 @@
     @Html.ValidationSummary(true, "", new {@class = "text-danger" } )
 </div>
 
+<script>
+    document.getElementById("login-form").addEventListener("submit", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (email === "" || password === "") {
+            alert("Please fill in all fields");
+            event.preventDefault();
+        }
+    });
+</script>

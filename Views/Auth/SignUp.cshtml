@@ -1,4 +1,5 @@
-﻿
+﻿@model LocalFileWebService.Models.AuthFormData
+
 @{
     ViewBag.Title = "SignUp";
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
@@ -7,21 +8,24 @@
     <h3>@Session["token"]</h3>
     <h1>Sign Up</h1>
 
-    <form action="/Auth/SignUp" method="post">
-        <label for="first">
+    <form action="/Auth/SignUp" method="post" id="sign-up-form">
+        <label for="email">
             Email:
         </label>
-        <input type="text" id="first" name="UserEmail" placeholder="Enter your Username" class="bg-dark" required autofocus>
+        <input type="text" id="email" name="UserEmail" placeholder="Enter your Username" class="bg-dark" required autofocus>
+        <p>@Html.ValidationMessageFor(f => f.UserEmail, "", new { @class = "text-danger" })</p>
 
         <label for="password">
             Password:
         </label>
         <input type="password" id="password" name="Password" placeholder="Enter your Password" class="bg-dark" required>
+        <p>@Html.ValidationMessageFor(f => f.Password, "", new { @class = "text-danger" })</p>
 
         <label for="password">
             Repeat Password:
         </label>
-        <input type="password" id="password" name="RePassword" placeholder="Enter your Password" class="bg-dark" required>
+        <input type="password" id="rePassword" name="RePassword" placeholder="Enter your Password" class="bg-dark" required>
+        <p>@Html.ValidationMessageFor(f => f.RePassword, "", new { @class = "text-danger" })</p>
 
         <div class="wrap">
             <button type="submit">
@@ -32,7 +36,7 @@
 
     <p class="text-white">
         Have an Account?
-        <a href="#" style="text-decoration: none;">
+        <a href="/Auth/Login" style="text-decoration: none;">
             Login Now
         </a>
     </p>
@@ -40,3 +44,20 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 </div>
 
+<script>
+    document.getElementById("sign-up-form").addEventListener("submit", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const rePassword = document.getElementById("rePassword").value;
+
+        if (email === "" || password === "" || rePassword === "") {
+            alert("Please fill in all fields");
+            event.preventDefault();
+        }
+
+        if (password !== rePassword) {
+            alert("Passwords do not match");
+            event.preventDefault();
+        }
+    });
+</script>

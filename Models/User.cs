@@ -12,7 +12,7 @@ namespace LocalFileWebService.Models
         [Key]
         public int UserId { get; set; }
 
-        [Required, MaxLength(255)]
+        [Required, MaxLength(255), EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string UserEmail { get; set; }
 
         [Required, MaxLength(64)]

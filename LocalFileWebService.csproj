@@ -302,11 +302,15 @@
     <Compile Include="Migrations\202501080343239_update-source-sourceUrl.Designer.cs">
       <DependentUpon>202501080343239_update-source-sourceUrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502090138594_fix-email.cs" />
+    <Compile Include="Migrations\202502090138594_fix-email.Designer.cs">
+      <DependentUpon>202502090138594_fix-email.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\AuthFormData.cs" />
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\FolderLink.cs" />
-    <Compile Include="Models\FormDataUser.cs" />
     <Compile Include="Models\MVCDBContext.cs" />
     <Compile Include="Models\Source.cs" />
     <Compile Include="Models\Tag.cs" />
@@ -377,6 +381,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202501080343239_update-source-sourceUrl.resx">
       <DependentUpon>202501080343239_update-source-sourceUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502090138594_fix-email.resx">
+      <DependentUpon>202502090138594_fix-email.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

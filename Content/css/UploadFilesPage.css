@@ -83,3 +83,111 @@
         grid-template-columns: 1fr; /* Chuyển về 1 cột */
     }
 }
+
+.path-floating-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.path-floating-container-show {
+    display: flex;
+}
+
+.path-floating-container-hide {
+    display: none;
+}
+
+.bottom-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.floating-body {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 600px;
+    max-width: 500px;
+    display: flex;
+    background-color: #343a40;
+    flex-direction: column;
+    padding: 20px;
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.folder-ele > .folder-name-ele {
+    border: 1px solid #343a40;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 5px;
+    gap: 10px;
+    border-radius: 5px;
+    background-color: transparent;
+    color: white;
+}
+
+    .folder-ele > .folder-name-ele:hover {
+        border: 1px solid white;
+    }
+
+.folder-ele {
+    margin: 10px;
+}
+
+.floating-body-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.tag-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    border-radius: 5px;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+
+    .tag-container div, button {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        border: none;
+    }
+
+        .tag-container div i:hover {
+            cursor: pointer;
+            background-color: red;
+        }

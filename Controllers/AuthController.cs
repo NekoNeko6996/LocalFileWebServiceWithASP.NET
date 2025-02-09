@@ -1,35 +1,15 @@
-﻿using LocalFileWebService.Models;
+﻿using LocalFileWebService.Class;
+using LocalFileWebService.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
-using BCrypt.Net;
-
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-
-using LocalFileWebService.Class;
-using System.Net;
 using System.Web.Security;
 
 namespace LocalFileWebService.Controllers
 {
     public class AuthController : Controller
     {
-
-        public class SignUpFormData 
-        {
-            [Required]
-            public string UserEmail { get; set; }
-            [Required]
-            public string Password { get; set; }
-        }
-
         // GET: Authenticaton
         [HttpGet]
         public ActionResult Login()
@@ -45,7 +25,7 @@ namespace LocalFileWebService.Controllers
         }
 
         [HttpPost]
-        public ActionResult SignUp(SignUpFormData data)
+        public ActionResult SignUp(AuthFormData data)
         {
             if (!ModelState.IsValid)
             {
@@ -76,6 +56,10 @@ namespace LocalFileWebService.Controllers
                     db.Users.Add(user);
                     db.SaveChanges();
 
+                    // tạo folder root
+                    int userId = db.Users.FirstOrDefault(u => u.UserEmail.Equals(data.UserEmail.ToLower())).UserId;
+                    FolderPath.CreateRootFolder(userId, db);
+
                     // Đăng nhập người dùng sau khi đăng ký
                     FormsAuthentication.SetAuthCookie(data.UserEmail, false);
 
@@ -91,8 +75,10 @@ namespace LocalFileWebService.Controllers
 
 
         [HttpPost]
-        public ActionResult Login(FormDataUser user)
+        public ActionResult Login(AuthFormData user)
         {
+            ModelState.Remove("RePassword");
+
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "From không hợp lệ!");
@@ -119,6 +105,12 @@ namespace LocalFileWebService.Controllers
 
             ModelState.AddModelError("", "Email hoặc mật khẩu không chính xác!");
             return View();
+        }
+
+        public ActionResult SignOut()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login");
         }
     }
 }
