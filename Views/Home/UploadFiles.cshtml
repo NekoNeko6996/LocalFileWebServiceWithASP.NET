@@ -147,6 +147,13 @@
 
 @* select folder script *@
 <script>
+    function onClickSelectFolder(folderPath) {
+        document.getElementById("show-upload-folder-path").innerText = `${folderPath}`;
+        hideFloatingContainer('path-floating-container');
+    }
+</script>
+
+<script>
     function showFloatingContainer(id) {
         const modal = document.getElementById(id);
         if (modal) {

@@ -1,0 +1,77 @@
+﻿body {
+}
+
+.view-video-btn {
+    cursor: pointer;
+}
+
+.file-display-name {
+    white-space: nowrap; /* Ngăn xuống dòng */
+    overflow: hidden; /* Ẩn nội dung thừa */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm cho nội dung bị cắt */
+    margin: 5px 0 5px 0;
+    text-align: left;
+}
+
+.folder-name:active {
+    color: white;
+}
+
+.folder-name:hover {
+    color: white;
+    text-decoration: none !important;
+}
+
+.create-new-folder-container {
+    width: 100%;
+    max-width: 550px;
+    height: 100%;
+    max-height: 190px;
+    background-color: #202427;
+    border-radius: 10px 10px 0 0;
+    padding: 20px;
+    color: white;
+}
+
+#contextMenu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+    #contextMenu li {
+        padding: 0;
+    }
+
+        #contextMenu li a {
+            display: block;
+            padding: 8px 16px;
+            clear: both;
+            font-weight: 400;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+            #contextMenu li a:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+    #contextMenu .divider {
+        height: 1px;
+        margin: 4px 0;
+        overflow: hidden;
+        background-color: #e9ecef;
+    }

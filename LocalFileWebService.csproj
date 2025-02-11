@@ -250,6 +250,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\css\ArtistPage.css" />
+    <Content Include="Content\css\IndexPage.css" />
     <Content Include="Content\css\UploadFilesPage.css" />
     <Content Include="Content\Resources\Default\Img\_z5862484494155_3d8ec334ae9dfa5829f4e47d070d8dfd.jpg" />
     <Content Include="Global.asax" />

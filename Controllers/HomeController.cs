@@ -74,6 +74,7 @@ namespace LocalFileWebService.Controllers
 
             ViewBag.Folders = foldersChildren;
             ViewBag.Sources = sources;
+            ViewBag.FolderPath = string.Join("/", folder_paths);
 
             return View();
         }
@@ -328,6 +329,8 @@ namespace LocalFileWebService.Controllers
                 return Redirect(Request.UrlReferrer.ToString());
             }
 
+            string absoluteFolderPath = Path.Combine(Server.MapPath("~/UploadFiles"), $"[{user.UserId}]", Path.Combine("root", folderPath, folderName));
+
             // create new folder
             Folder folder = new Folder
             {
@@ -340,23 +343,20 @@ namespace LocalFileWebService.Controllers
             db.Folders.Add(folder);
             db.SaveChanges();
 
+            Directory.CreateDirectory(absoluteFolderPath);
+
             TempData["SuccessMessage"]= $"Create new folder [{folderName}] successfully.";
             return Redirect(Request.UrlReferrer.ToString());
         }
 
-        [HttpDelete]
-        public ActionResult DeleteFolder(int id, string name, string type, string folder_path)
+        [HttpPost]
+        public ActionResult DeleteFolder(int id, string name, string path)
         {
-            List<string> validType = new List<string>();
-            validType.Add("folder");
-            validType.Add("source");
-
             List<string> folderPath = new List<string>();
-            folderPath.Add("root");
 
-            if(!string.IsNullOrEmpty(folder_path))
+            if (!string.IsNullOrEmpty(path))
             {
-                folderPath.AddRange(folder_path.Split('/'));
+                folderPath.AddRange(path.Split('/'));
             }
 
             HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
@@ -376,23 +376,25 @@ namespace LocalFileWebService.Controllers
             MVCDBContext db = new MVCDBContext();
             User user = db.Users.FirstOrDefault(u => u.UserEmail.Equals(userEmail));
 
-            if (user == null) 
+            if (user == null)
             {
                 return Json(new { success = false, message = "user not found" });
             }
 
-            if(!validType.Any(t => t.Equals(type)))
+            string absolutePath = Path.Combine(Server.MapPath("~/UploadFiles"), $"[{user.UserId}]", Path.Combine(folderPath.ToArray()));
+
+            // delete folder and all children 
+            try
             {
-                return Json(new { success = false, message = "invalid type of source" });
+                FolderPath.RemoveFolder(user.UserId, id, absolutePath, db);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
             }
 
-            switch (type)
-            {
-                case "folder":
-                    break;
-            }
-
-            return Json(new { success = false, message = "." });
+            //return Json(new { success = false, message = "." });
+            return Redirect(Request.UrlReferrer.ToString());
         }
     }
 }
